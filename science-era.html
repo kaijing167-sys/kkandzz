@@ -3,570 +3,389 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>星界守望 · 科学纪元（2.5D 魂系塔防）</title>
+<title>科学纪元 · 星界守望</title>
+<link rel="stylesheet" href="theme.css">
 <style>
-:root {
-  --void: #0a0b0e;
-  --stone: #16181e;
-  --stone-hi: #22252e;
-  --brass: #b89456;
-  --brass-hi: #e2c282;
-  --brass-dim: rgba(184, 148, 86, 0.28);
-  --ash: #dfd6c4;
-  --ash-dim: #978f80;
-  --ember: #d9622b;
-  --crimson: #9e2424;
-  --crimson-hi: #d43f3f;
-  --verdigris: #6ea378;
-  --arc: #7ab3cf;
-  --serif: "Songti SC", "STSong", "Noto Serif SC", "SimSun", Georgia, serif;
-  --sans: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
-}
-
-*, *::before, *::after { box-sizing: border-box; user-select: none; }
-
 html, body {
-  margin: 0;
-  width: 100%;
   height: 100%;
   overflow: hidden;
-  background: var(--void);
-  color: var(--ash);
-  font-family: var(--sans);
 }
 
-#gameCanvas {
-  position: fixed;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-  cursor: crosshair;
-}
-
-/* ---------- Vignette & Atmosphere ---------- */
-.vignette {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  background: radial-gradient(ellipse 76% 74% at 50% 48%, transparent 45%, rgba(6, 7, 10, 0.84) 100%);
-  z-index: 2;
-}
-
-/* ---------- HUD Layer ---------- */
-.hud {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 5;
+.game-shell {
+  height: 100svh;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 12px clamp(12px, 2.5vw, 24px) 14px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  padding: 16px 22px;
+  gap: 10px;
 }
 
+/* ---------- Top HUD ---------- */
 .hud-top {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
-.hud-left, .hud-right {
+.hud-group {
   display: flex;
   align-items: center;
-  gap: 10px;
-  pointer-events: auto;
+  gap: 8px;
 }
 
-.souls-panel {
-  background: linear-gradient(180deg, rgba(22, 24, 30, 0.92), rgba(12, 13, 17, 0.94));
-  border: 1px solid var(--brass-dim);
-  box-shadow: inset 0 0 0 1px rgba(255, 232, 185, 0.04), 0 8px 24px rgba(0, 0, 0, 0.65);
-}
-
-.back-btn, .ctrl-btn {
-  padding: 8px 14px;
-  background: rgba(18, 20, 26, 0.9);
-  border: 1px solid var(--brass-dim);
-  color: var(--ash);
-  font-family: var(--serif);
-  font-size: 13px;
-  letter-spacing: 0.14em;
-  cursor: pointer;
-  transition: border-color 0.2s, background 0.2s, color 0.2s;
-  text-decoration: none;
+.stat-strip {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-}
-
-.back-btn:hover, .ctrl-btn:hover {
-  border-color: var(--brass-hi);
-  background: rgba(34, 36, 44, 0.95);
-  color: var(--brass-hi);
-}
-
-.ctrl-btn.active {
-  border-color: var(--ember);
-  color: #ffb178;
-  background: rgba(54, 28, 18, 0.85);
-}
-
-.stat-bar {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  padding: 8px 18px;
-}
-
-.stat-item {
-  display: flex;
-  align-items: baseline;
-  gap: 7px;
-}
-
-.stat-label {
-  font-family: var(--serif);
-  font-size: 11px;
-  letter-spacing: 0.16em;
-  color: var(--ash-dim);
-}
-
-.stat-val {
-  font-family: var(--serif);
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--brass-hi);
+  gap: 14px;
+  padding: 6px 14px;
+  background: var(--card);
+  border: var(--border);
+  border-radius: 999px;
+  box-shadow: var(--shadow-sm);
+  font-weight: 900;
+  font-size: 14px;
   font-variant-numeric: tabular-nums;
 }
 
-.stat-val.hp { color: #e06253; }
-.stat-val.wave { color: var(--ash); }
+.stat-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
 
-.wave-btn {
-  padding: 9px 18px;
-  background: linear-gradient(180deg, #4b2316, #2d140c);
-  border: 1px solid #c96c3d;
-  color: #f6dec0;
-  font-family: var(--serif);
+.stat-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  border: 1.8px solid var(--ink);
+}
+.stat-dot.energy { background: var(--lab-amber); }
+.stat-dot.hp { background: var(--lab-coral); }
+.stat-dot.wave { background: var(--lab-teal); }
+
+.ctrl-pill {
+  padding: 7px 12px;
+  background: var(--card);
+  border: var(--border);
+  border-radius: 11px;
+  box-shadow: var(--shadow-sm);
+  font-weight: 800;
   font-size: 13px;
-  letter-spacing: 0.16em;
-  cursor: pointer;
-  transition: filter 0.2s, border-color 0.2s;
+  transition: transform 0.1s, box-shadow 0.1s, background 0.12s;
 }
+.ctrl-pill:hover { background: #fff7e2; transform: translateY(-1px); box-shadow: 0 4px 0 var(--ink); }
+.ctrl-pill:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--ink); }
+.ctrl-pill.active { background: var(--lab-amber); }
 
-.wave-btn:hover:not(:disabled) {
-  filter: brightness(1.18);
-  border-color: #f4a46b;
+.btn-wave {
+  padding: 8px 16px;
+  background: var(--lab-teal);
+  color: #fffdf8;
+  border: var(--border);
+  border-radius: 11px;
+  box-shadow: var(--shadow-sm);
+  font-weight: 900;
+  font-size: 13.5px;
+  transition: transform 0.1s, box-shadow 0.1s, filter 0.12s;
 }
+.btn-wave:hover:not(:disabled) { filter: brightness(1.06); transform: translateY(-1px); box-shadow: 0 4px 0 var(--ink); }
+.btn-wave:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 1px 0 var(--ink); }
+.btn-wave:disabled { background: #c9c2b4; color: #5b626c; cursor: default; box-shadow: 0 2px 0 var(--ink); }
 
-.wave-btn:disabled {
-  opacity: 0.4;
-  cursor: default;
-}
-
-/* ---------- Souls-like Boss Bar ---------- */
-.boss-wrap {
-  position: fixed;
-  left: 50%;
-  bottom: 122px;
-  transform: translateX(-50%);
-  width: min(680px, 86vw);
-  z-index: 6;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.6s ease;
-}
-
-.boss-wrap.show { opacity: 1; }
-
-.boss-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  margin-bottom: 5px;
-  padding: 0 2px;
-}
-
-.boss-name {
-  font-family: var(--serif);
-  font-size: 17px;
-  letter-spacing: 0.22em;
-  color: #efe2c8;
-  text-shadow: 0 2px 10px #000;
-}
-
-.boss-phase {
-  font-family: var(--serif);
-  font-size: 12px;
-  letter-spacing: 0.16em;
-  color: #e29d65;
-  text-shadow: 0 1px 6px #000;
-}
-
-.boss-track {
+/* ---------- Board Stage ---------- */
+.stage-wrap {
   position: relative;
-  height: 11px;
-  background: rgba(12, 10, 11, 0.92);
-  border: 1px solid #967746;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.8);
+  flex: 1;
+  min-height: 0;
+  background: #e5f0ec;
+  border: 3px solid var(--ink);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
   overflow: hidden;
 }
 
+#gameCanvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Boss Bar (top-center inside board) */
+.boss-bar {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(440px, 86%);
+  padding: 8px 12px;
+  background: var(--card);
+  border: 2.5px solid var(--ink);
+  border-radius: 13px;
+  box-shadow: var(--shadow-sm);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.boss-bar.show { opacity: 1; }
+
+.boss-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12.5px;
+  font-weight: 900;
+  margin-bottom: 5px;
+}
+.boss-phase { color: var(--lab-coral); font-size: 11.5px; }
+
+.boss-track {
+  position: relative;
+  height: 10px;
+  background: #e6dfd1;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  overflow: hidden;
+}
 .boss-fill {
   height: 100%;
   width: 100%;
-  background: linear-gradient(90deg, #6d1414, #a82222 65%, #cf3838);
-  transition: width 0.15s linear;
+  background: var(--lab-coral);
+  transition: width 0.12s linear;
 }
-
 .boss-shield {
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, rgba(110, 163, 120, 0.35), rgba(154, 214, 152, 0.55));
+  background: rgba(111, 209, 92, 0.55);
   opacity: 0;
-  transition: opacity 0.25s;
+  transition: opacity 0.2s;
 }
-
 .boss-shield.active { opacity: 1; }
 
-/* ---------- Bottom Dock: Tower Palette & Inspector ---------- */
-.hud-bottom {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 14px;
-}
-
-.tower-dock {
-  pointer-events: auto;
-  display: flex;
-  gap: 8px;
-  padding: 8px;
-}
-
-.tower-slot {
-  position: relative;
-  width: 126px;
-  padding: 8px 10px;
-  background: rgba(16, 18, 24, 0.9);
-  border: 1px solid rgba(184, 148, 86, 0.22);
-  color: var(--ash);
-  text-align: left;
-  cursor: pointer;
-  transition: border-color 0.18s, background 0.18s, transform 0.12s;
-}
-
-.tower-slot:hover {
-  border-color: var(--brass);
-  background: rgba(28, 31, 40, 0.95);
-}
-
-.tower-slot.selected {
-  border-color: var(--brass-hi);
-  background: rgba(42, 34, 24, 0.95);
-  box-shadow: inset 0 0 12px rgba(217, 98, 43, 0.22);
-  transform: translateY(-2px);
-}
-
-.tower-slot.poor { opacity: 0.48; }
-
-.slot-key {
+/* Wave Toast */
+.wave-toast {
   position: absolute;
-  top: 5px;
-  right: 7px;
-  font-size: 10px;
-  color: var(--ash-dim);
-  font-family: var(--serif);
-}
-
-.slot-title {
-  display: block;
-  font-family: var(--serif);
+  top: 14px;
+  left: 50%;
+  transform: translate(-50%, -8px);
+  padding: 6px 16px;
+  background: var(--lab-amber);
+  border: 2.5px solid var(--ink);
+  border-radius: 999px;
+  box-shadow: var(--shadow-sm);
+  font-weight: 900;
   font-size: 13.5px;
-  letter-spacing: 0.08em;
-  color: var(--ash);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.25s, transform 0.25s;
 }
+.wave-toast.show { opacity: 1; transform: translate(-50%, 0); }
 
-.slot-sub {
-  display: block;
-  font-size: 11px;
-  color: var(--ash-dim);
-  margin: 2px 0 5px;
-}
-
-.slot-cost {
-  font-family: var(--serif);
-  font-size: 12px;
-  color: var(--brass-hi);
-}
-
-/* Selected Tower Inspector / Reaction Guide */
-.info-box {
-  pointer-events: auto;
-  width: min(370px, 42vw);
-  padding: 10px 14px;
-  min-height: 82px;
-}
-
-.info-head {
+/* ---------- Bottom Control Dock ---------- */
+.hud-bottom {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
-  margin-bottom: 4px;
+  gap: 10px;
 }
 
-.info-title {
-  font-family: var(--serif);
-  font-size: 14px;
-  letter-spacing: 0.12em;
-  color: var(--brass-hi);
-}
-
-.info-desc {
-  margin: 0;
-  font-size: 12px;
-  color: var(--ash-dim);
-  line-height: 1.55;
-}
-
-.info-actions {
+.tower-dock {
   display: flex;
   gap: 8px;
-  margin-top: 8px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+
+.tower-btn {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 11px;
+  background: var(--card);
+  border: var(--border);
+  border-radius: 13px;
+  box-shadow: var(--shadow-sm);
+  text-align: left;
+  flex: none;
+  transition: transform 0.1s, box-shadow 0.1s, background 0.12s;
+}
+.tower-btn:hover { background: #fff7e2; transform: translateY(-1px); box-shadow: 0 4px 0 var(--ink); }
+.tower-btn.selected { background: #fff0c2; transform: translateY(-2px); box-shadow: 0 5px 0 var(--ink); }
+.tower-btn.poor { opacity: 0.52; }
+
+.tower-ico {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  border: 2px solid var(--ink);
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+.tower-ico svg { width: 24px; height: 24px; }
+.tower-ico.teal { background: #daf2ec; }
+.tower-ico.amber { background: #fff0c7; }
+.tower-ico.green { background: #e1f5dc; }
+.tower-ico.blue { background: #dfebfc; }
+
+.tower-name { display: block; font-weight: 900; font-size: 13px; line-height: 1.15; }
+.tower-cost { display: block; font-size: 11.5px; font-weight: 800; color: var(--ink-soft); margin-top: 2px; }
+
+.action-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  min-width: 240px;
+  padding: 8px 12px;
+  background: var(--card);
+  border: var(--border);
+  border-radius: 13px;
+  box-shadow: var(--shadow-sm);
+  font-size: 12.5px;
+  font-weight: 800;
+  color: var(--ink-soft);
+}
+
+.action-bar .sel-label {
+  color: var(--ink);
+  margin-right: auto;
+  white-space: nowrap;
 }
 
 .mini-btn {
   padding: 5px 11px;
-  background: rgba(34, 29, 22, 0.92);
-  border: 1px solid var(--brass);
-  color: var(--brass-hi);
-  font-family: var(--serif);
+  border: 2px solid var(--ink);
+  border-radius: 8px;
+  background: var(--lab-amber);
+  color: var(--ink);
+  font-weight: 900;
   font-size: 12px;
-  letter-spacing: 0.1em;
-  cursor: pointer;
+  white-space: nowrap;
 }
+.mini-btn:disabled { opacity: 0.4; cursor: default; }
+.mini-btn.sell { background: #fde3dc; color: #9c2b1b; }
 
-.mini-btn:hover:not(:disabled) { background: rgba(62, 48, 30, 0.95); }
-.mini-btn:disabled { opacity: 0.35; cursor: default; }
-.mini-btn.sell { border-color: #7d3c33; color: #e29589; }
-
-/* ---------- Souls-like Full-Width Banner ---------- */
-.banner {
-  position: fixed;
-  left: 0;
-  right: 0;
-  top: 40%;
-  transform: translateY(-50%);
-  z-index: 10;
-  pointer-events: none;
-  text-align: center;
-  padding: 26px 20px;
-  background: linear-gradient(90deg, transparent, rgba(8, 8, 11, 0.88) 22%, rgba(8, 8, 11, 0.88) 78%, transparent);
-  border-top: 1px solid rgba(184, 148, 86, 0.24);
-  border-bottom: 1px solid rgba(184, 148, 86, 0.24);
-  opacity: 0;
-  transition: opacity 0.45s ease;
-}
-
-.banner.show { opacity: 1; }
-
-.banner-main {
-  font-family: var(--serif);
-  font-size: clamp(1.8rem, 4.4vw, 3.2rem);
-  letter-spacing: 0.34em;
-  padding-left: 0.34em;
-  color: #e4c485;
-  text-shadow: 0 4px 20px #000;
-}
-
-.banner.death .banner-main { color: #b92c2c; }
-.banner.victory .banner-main { color: #f0c978; }
-
-.banner-sub {
-  margin-top: 6px;
-  font-family: var(--serif);
-  font-size: 13px;
-  letter-spacing: 0.26em;
-  color: var(--ash-dim);
-}
-
-/* ---------- End / Intro Overlay ---------- */
-.overlay {
-  position: fixed;
+/* End Modal */
+.end-overlay {
+  position: absolute;
   inset: 0;
-  z-index: 15;
-  background: rgba(8, 9, 12, 0.82);
+  background: rgba(27, 34, 44, 0.45);
   display: grid;
   place-items: center;
-  padding: 20px;
+  padding: 16px;
+  z-index: 10;
 }
+.end-overlay[hidden] { display: none; }
 
-.overlay[hidden] { display: none; }
-
-.modal-card {
-  width: min(480px, 94vw);
-  padding: 28px 30px;
+.end-card {
+  width: min(360px, 92%);
+  padding: 22px 24px;
+  background: var(--card);
+  border: 3px solid var(--ink);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 8px 0 var(--ink);
   text-align: center;
-  background: linear-gradient(180deg, #16181e, #0e1015);
-  border: 1px solid var(--brass);
-  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.85);
 }
-
-.modal-kicker {
-  font-family: var(--serif);
-  font-size: 11px;
-  letter-spacing: 0.3em;
-  color: var(--brass);
-  margin-bottom: 8px;
+.end-card h2 {
+  margin: 0 0 8px;
+  font-family: var(--font-display);
+  font-size: 1.65rem;
+  font-weight: 900;
 }
-
-.modal-card h1 {
-  margin: 0 0 12px;
-  font-family: var(--serif);
-  font-size: 2rem;
-  font-weight: 600;
-  letter-spacing: 0.2em;
-  color: var(--ash);
-}
-
-.modal-card p {
+.end-card p {
   margin: 0 0 18px;
+  color: var(--ink-soft);
   font-size: 13.5px;
-  color: var(--ash-dim);
-  line-height: 1.75;
+  font-weight: 700;
 }
-
-.combo-hints {
-  text-align: left;
-  padding: 12px 14px;
-  margin-bottom: 20px;
-  background: rgba(10, 11, 15, 0.72);
-  border: 1px solid var(--brass-dim);
-  font-size: 12.5px;
-  color: #c8beac;
-  line-height: 1.8;
-}
-
-.combo-hints strong { color: var(--brass-hi); font-family: var(--serif); }
-
-.modal-btns {
+.end-actions {
   display: flex;
   justify-content: center;
-  gap: 12px;
+  gap: 10px;
 }
 
-@media (max-width: 860px) {
-  .hud { padding: 10px; }
+@media (max-width: 820px) {
   .hud-bottom { flex-direction: column; align-items: stretch; }
-  .tower-dock { justify-content: space-between; overflow-x: auto; }
-  .tower-slot { min-width: 102px; flex: 1; }
-  .info-box { width: 100%; }
-  .boss-wrap { bottom: 205px; }
+  .action-bar { min-width: 0; justify-content: space-between; }
 }
 </style>
 </head>
 <body>
-<canvas id="gameCanvas"></canvas>
-<div class="vignette"></div>
-
-<!-- 顶部与底部 HUD -->
-<div class="hud">
-  <div class="hud-top">
-    <div class="hud-left">
-      <a class="back-btn" href="universe-science.html">← 返回图鉴</a>
-      <div class="souls-panel stat-bar">
-        <div class="stat-item"><span class="stat-label">余烬灵魂</span><span class="stat-val" id="soulsVal">220</span></div>
-        <div class="stat-item"><span class="stat-label">核心耐久</span><span class="stat-val hp" id="hpVal">20</span></div>
-        <div class="stat-item"><span class="stat-label">波次</span><span class="stat-val wave" id="waveVal">0 / 6</span></div>
+<div class="game-shell">
+  <header class="hud-top">
+    <div class="hud-group">
+      <a class="pill-btn" href="universe-science.html">← 返回</a>
+      <div class="stat-strip" aria-label="战局状态">
+        <span class="stat-item"><span class="stat-dot energy"></span><span id="energyVal">220</span></span>
+        <span class="stat-item"><span class="stat-dot hp"></span><span id="hpVal">20</span></span>
+        <span class="stat-item"><span class="stat-dot wave"></span><span id="waveVal">0 / 6</span></span>
       </div>
     </div>
-    <div class="hud-right">
-      <button class="ctrl-btn" id="speedBtn">1× 节奏</button>
-      <button class="ctrl-btn" id="muteBtn">音效 开</button>
-      <button class="wave-btn" id="nextWaveBtn">点燃烽火 · 下一波</button>
+    <div class="hud-group">
+      <button class="ctrl-pill" id="speedBtn">1×</button>
+      <button class="ctrl-pill" id="muteBtn">音效 开</button>
+      <button class="btn-wave" id="nextWaveBtn">开始第 1 波</button>
     </div>
-  </div>
+  </header>
 
-  <div class="hud-bottom">
-    <div class="souls-panel tower-dock" id="towerDock">
-      <button class="tower-slot selected" data-tower="physics">
-        <span class="slot-key">1</span>
-        <span class="slot-title">电磁线圈塔</span>
-        <span class="slot-sub">物理 · 吸甩铁球</span>
-        <span class="slot-cost">70 魂</span>
-      </button>
-      <button class="tower-slot" data-tower="chemistry">
-        <span class="slot-key">2</span>
-        <span class="slot-title">晶格反应塔</span>
-        <span class="slot-sub">化学 · 酸蚀/引爆</span>
-        <span class="slot-cost">80 魂</span>
-      </button>
-      <button class="tower-slot" data-tower="biology">
-        <span class="slot-key">3</span>
-        <span class="slot-title">共生树塔</span>
-        <span class="slot-sub">生物 · 分裂传染</span>
-        <span class="slot-cost">75 魂</span>
-      </button>
-      <button class="tower-slot" data-tower="compute">
-        <span class="slot-key">4</span>
-        <span class="slot-title">算法阵列塔</span>
-        <span class="slot-sub">算力 · 标记破防</span>
-        <span class="slot-cost">90 魂</span>
-      </button>
-    </div>
+  <main class="stage-wrap">
+    <canvas id="gameCanvas"></canvas>
 
-    <div class="souls-panel info-box" id="infoBox">
-      <div class="info-head">
-        <span class="info-title" id="infoTitle">物理 · 电磁线圈塔</span>
+    <div class="boss-bar" id="bossBar">
+      <div class="boss-meta">
+        <span>失控反应釜</span>
+        <span class="boss-phase" id="bossPhase">阶段 1 · 产怪</span>
       </div>
-      <p class="info-desc" id="infoDesc">点击地图上的青铜石座建塔。磁力可吸附「失控铁球」并甩回撞碎后方怪群，过载电弧亦可点燃易爆气泡。</p>
-      <div class="info-actions" id="infoActions" hidden>
-        <button class="mini-btn" id="upgradeBtn">强化</button>
-        <button class="mini-btn sell" id="sellBtn">拆解回收</button>
+      <div class="boss-track">
+        <div class="boss-fill" id="bossFill"></div>
+        <div class="boss-shield" id="bossShield"></div>
       </div>
     </div>
-  </div>
-</div>
 
-<!-- 魂系 Boss 底部血条 -->
-<div class="boss-wrap" id="bossWrap">
-  <div class="boss-head">
-    <span class="boss-name">失控反应釜 · 炼金巨像</span>
-    <span class="boss-phase" id="bossPhase">阶段一 · 泄压产怪</span>
-  </div>
-  <div class="boss-track">
-    <div class="boss-fill" id="bossFill"></div>
-    <div class="boss-shield" id="bossShield"></div>
-  </div>
-</div>
+    <div class="wave-toast" id="waveToast"></div>
 
-<!-- 魂系全宽横幅 -->
-<div class="banner" id="banner">
-  <div class="banner-main" id="bannerMain">薪 火 初 燃</div>
-  <div class="banner-sub" id="bannerSub">FIRST WAVE APPROACHES</div>
-</div>
-
-<!-- 开场 / 结算弹窗 -->
-<div class="overlay" id="overlay">
-  <div class="modal-card">
-    <div class="modal-kicker" id="modalKicker">UNIVERSE I · 科学纪元</div>
-    <h1 id="modalTitle">失控实验室防线</h1>
-    <p id="modalDesc">大事故后的炼金观测栈道正被失控实验品吞噬。在 2.5D 俯瞰石座上部署四大学科塔，用跨学科反应守住薪火核心，直面第 6 波四阶段 Boss「失控反应釜」。</p>
-    <div class="combo-hints" id="modalHints">
-      <strong>电磁塔 + 失控铁球</strong>：磁力甩回撞击沿途怪群<br>
-      <strong>化学塔 + 不稳定气泡</strong>：烈焰点燃触发大范围连锁引爆<br>
-      <strong>化学塔 + 失控铁球</strong>：酸液腐蚀金属重甲（护甲骤降）<br>
-      <strong>生物塔 + 酸液史莱姆</strong>：感染随分裂自动传染给子体<br>
-      <strong>算法塔 + 变异蘑菇/Boss</strong>：标记易伤 +45%，优先破除孢子光环
+    <div class="end-overlay" id="endOverlay" hidden>
+      <div class="end-card">
+        <h2 id="endTitle">防守成功</h2>
+        <p id="endDesc"></p>
+        <div class="end-actions">
+          <button class="btn-game teal" id="restartBtn">再来一局</button>
+          <a class="btn-game ghost" href="index.html">返回大厅</a>
+        </div>
+      </div>
     </div>
-    <div class="modal-btns">
-      <button class="wave-btn" id="startGameBtn">踏入观测栈道</button>
-      <a class="back-btn" href="universe-science.html">返回图鉴</a>
+  </main>
+
+  <footer class="hud-bottom">
+    <div class="tower-dock" id="towerDock">
+      <button class="tower-btn selected" data-tower="physics" title="快捷键 1">
+        <span class="tower-ico teal"><svg viewBox="0 0 36 36" fill="none" stroke="#1b222c" stroke-width="2.2" stroke-linecap="round"><rect x="12" y="18" width="12" height="13" rx="3" fill="#fffdf8"/><ellipse cx="18" cy="18" rx="11" ry="4" fill="#f4b731"/><circle cx="18" cy="10" r="5" fill="#63c5da"/></svg></span>
+        <span><span class="tower-name">电磁线圈塔</span><span class="tower-cost">70 能量</span></span>
+      </button>
+      <button class="tower-btn" data-tower="chemistry" title="快捷键 2">
+        <span class="tower-ico amber"><svg viewBox="0 0 36 36" fill="none" stroke="#1b222c" stroke-width="2.2" stroke-linejoin="round"><path d="M13 6h10m-8 0v8l-7 13a3 3 0 0 0 3 4h14a3 3 0 0 0 3-4l-7-13V6" fill="#fffdf8"/><path d="M10 23h16l2 5a2 2 0 0 1-2 3H10a2 2 0 0 1-2-3z" fill="#f48442"/></svg></span>
+        <span><span class="tower-name">晶格反应塔</span><span class="tower-cost">80 能量</span></span>
+      </button>
+      <button class="tower-btn" data-tower="biology" title="快捷键 3">
+        <span class="tower-ico green"><svg viewBox="0 0 36 36" fill="none" stroke="#1b222c" stroke-width="2.2"><rect x="15" y="20" width="6" height="11" rx="2" fill="#a67c52"/><circle cx="12" cy="17" r="6" fill="#6fd15c"/><circle cx="24" cy="17" r="6" fill="#6fd15c"/><circle cx="18" cy="11" r="7" fill="#8ce079"/></svg></span>
+        <span><span class="tower-name">共生树塔</span><span class="tower-cost">75 能量</span></span>
+      </button>
+      <button class="tower-btn" data-tower="compute" title="快捷键 4">
+        <span class="tower-ico blue"><svg viewBox="0 0 36 36" fill="none" stroke="#1b222c" stroke-width="2.2"><polygon points="18,5 30,18 18,31 6,18" fill="#f4b731"/><circle cx="18" cy="18" r="5" fill="#fffdf8"/><circle cx="18" cy="18" r="2" fill="#3b7dd8"/></svg></span>
+        <span><span class="tower-name">算法阵列塔</span><span class="tower-cost">90 能量</span></span>
+      </button>
     </div>
-  </div>
+
+    <div class="action-bar" id="actionBar">
+      <span class="sel-label" id="actionTip">点击空位建造 · 电磁甩铁球 / 化学引爆气泡</span>
+      <button class="mini-btn" id="upgradeBtn" hidden>升级</button>
+      <button class="mini-btn sell" id="sellBtn" hidden>拆除</button>
+    </div>
+  </footer>
 </div>
 
 <script>
@@ -575,131 +394,85 @@ html, body {
   const ctx = canvas.getContext('2d');
   const byId = id => document.getElementById(id);
 
-  // ---------- 2.5D Isometric Map Definition (12 x 10 grid) ----------
-  const COLS = 12;
-  const ROWS = 10;
+  try {
+    const b = localStorage.getItem('atlas.brightness');
+    if (b) document.documentElement.style.filter = `brightness(${b}%)`;
+  } catch {}
 
-  // Path waypoints in grid coordinates (winding stone causeway)
+  // ---------- Clean Top-Down Lab Board (12 x 8) ----------
+  const COLS = 12;
+  const ROWS = 8;
+
   const PATH = [
     { x: 0, y: 2 },
     { x: 3, y: 2 },
-    { x: 3, y: 6 },
-    { x: 6, y: 6 },
+    { x: 3, y: 5 },
+    { x: 6, y: 5 },
     { x: 6, y: 2 },
     { x: 9, y: 2 },
-    { x: 9, y: 7 },
-    { x: 11, y: 7 }
+    { x: 9, y: 6 },
+    { x: 11, y: 6 }
   ];
 
-  // Build path cell lookup
-  const pathSet = new Set();
-  for (let i = 0; i < PATH.length - 1; i++) {
-    const a = PATH[i], b = PATH[i + 1];
-    const dx = Math.sign(b.x - a.x), dy = Math.sign(b.y - a.y);
-    let cx = a.x, cy = a.y;
-    while (true) {
-      pathSet.add(`${cx},${cy}`);
-      if (cx === b.x && cy === b.y) break;
-      cx += dx; cy += dy;
-    }
-  }
-
-  // Elevated Brass/Stone Tower Pedestals (10 strategic slots)
   const PADS = [
     { x: 2, y: 1 }, { x: 4, y: 1 }, { x: 2, y: 4 }, { x: 4, y: 4 },
-    { x: 5, y: 7 }, { x: 7, y: 4 }, { x: 8, y: 1 }, { x: 8, y: 5 },
-    { x: 10, y: 4 }, { x: 10, y: 6 }
+    { x: 5, y: 6 }, { x: 7, y: 4 }, { x: 8, y: 1 }, { x: 8, y: 4 },
+    { x: 10, y: 3 }, { x: 10, y: 5 }
   ];
 
-  // ---------- Tower Specs ----------
   const TOWERS = {
-    physics: {
-      name: '电磁线圈塔', discipline: '物理', cost: 70, upgradeCost: [90, 130],
-      range: 2.75, rate: 1.05, dmg: 26, color: '#7ab3cf', accent: '#c9e8f5',
-      desc: '释放苍白电弧。对「失控铁球」触发磁力牵引并甩回撞碎后方敌人；亦可引爆不稳定气泡。'
-    },
-    chemistry: {
-      name: '晶格反应塔', discipline: '化学', cost: 80, upgradeCost: [100, 145],
-      range: 2.6, rate: 0.95, dmg: 30, color: '#d9622b', accent: '#ffba66',
-      desc: '投掷炼金酸火瓶。酸液大幅腐蚀铁球重甲；烈焰可瞬间引爆「不稳定气泡」引发连锁轰炸。'
-    },
-    biology: {
-      name: '共生树塔', discipline: '生物', cost: 75, upgradeCost: [95, 135],
-      range: 2.7, rate: 1.2, dmg: 18, color: '#6ea378', accent: '#a8d9a3',
-      desc: '发射枯白孢子藤蔓，附带持续感染与减速。击杀受感染的「酸液史莱姆」时，毒素会随分裂继续传染。'
-    },
-    compute: {
-      name: '算法阵列塔', discipline: '计算机', cost: 90, upgradeCost: [110, 155],
-      range: 3.6, rate: 1.5, dmg: 16, color: '#cfa968', accent: '#f5dfa8',
-      desc: '超远射程，优先锁定「变异蘑菇」与 Boss 施加【算法标记】（承受伤害 +45%），大幅提升集火效率。'
-    }
+    physics:   { name: '电磁线圈塔', cost: 70, upgradeCost: [90, 130], range: 2.75, rate: 1.05, dmg: 26, color: '#2ea8b8', tip: '吸甩失控铁球，电弧可引爆气泡' },
+    chemistry: { name: '晶格反应塔', cost: 80, upgradeCost: [100, 145], range: 2.6,  rate: 0.95, dmg: 30, color: '#e8624a', tip: '酸液腐蚀铁球护甲，烈焰连爆气泡' },
+    biology:   { name: '共生树塔',   cost: 75, upgradeCost: [95, 135], range: 2.7,  rate: 1.2,  dmg: 18, color: '#4cb850', tip: '感染减速，史莱姆分裂时继续传染' },
+    compute:   { name: '算法阵列塔', cost: 90, upgradeCost: [110, 155], range: 3.6,  rate: 1.5,  dmg: 16, color: '#3b7dd8', tip: '优先锁定蘑菇与 Boss，易伤 +45%' }
   };
 
-  // ---------- Enemy Specs (faithful to plan.md) ----------
   const ENEMIES = {
-    slime: { name: '酸液史莱姆', hp: 95, speed: 1.15, armor: 0, reward: 16, radius: 13, color: '#699e63', split: true },
-    miniSlime: { name: '分裂小史莱姆', hp: 38, speed: 1.55, armor: 0, reward: 6, radius: 9, color: '#83ba7c', split: false },
-    ironball: { name: '失控铁球', hp: 290, speed: 0.62, armor: 0.7, reward: 32, radius: 16, color: '#58606d', magnetic: true },
-    bubble: { name: '不稳定气泡', hp: 62, speed: 1.85, armor: 0, reward: 18, radius: 12, color: '#e08943', volatile: true },
-    mushroom: { name: '变异蘑菇', hp: 175, speed: 0.85, armor: 0.15, reward: 30, radius: 15, color: '#b5a28c', aura: true },
-    boss: { name: '失控反应釜', hp: 2800, speed: 0.36, armor: 0.25, reward: 300, radius: 28, color: '#8d4029', isBoss: true }
+    slime:     { name: '酸液史莱姆', hp: 95,   speed: 1.15, armor: 0,    reward: 16, radius: 13, color: '#6fd15c', split: true },
+    miniSlime: { name: '小史莱姆',   hp: 38,   speed: 1.55, armor: 0,    reward: 6,  radius: 9,  color: '#8ee07d', split: false },
+    ironball:  { name: '失控铁球',   hp: 290,  speed: 0.62, armor: 0.7,  reward: 32, radius: 16, color: '#6d7888', magnetic: true },
+    bubble:    { name: '不稳定气泡', hp: 62,   speed: 1.85, armor: 0,    reward: 18, radius: 12, color: '#f9825c', volatile: true },
+    mushroom:  { name: '变异蘑菇',   hp: 175,  speed: 0.85, armor: 0.15, reward: 30, radius: 15, color: '#c9795b', aura: true },
+    boss:      { name: '失控反应釜', hp: 2800, speed: 0.36, armor: 0.25, reward: 300, radius: 26, color: '#9c422c', isBoss: true }
   };
 
-  // ---------- 6 Curated Waves ----------
   const WAVES = [
-    {
-      title: '第一波 · 培养皿碎裂', sub: 'ACID SLIMES ESCAPING',
-      groups: [{ type: 'slime', count: 7, gap: 1.15 }]
-    },
-    {
-      title: '第二波 · 失控磁铁与易爆泡', sub: 'IRON SPHERES & VOLATILE BUBBLES',
-      groups: [
-        { type: 'ironball', count: 2, gap: 2.2 },
-        { type: 'bubble', count: 6, gap: 0.75 },
-        { type: 'slime', count: 4, gap: 1.0 }
-      ]
-    },
-    {
-      title: '第三波 · 孢子迷雾蔓延', sub: 'MUTANT MUSHROOM AURA',
-      groups: [
-        { type: 'mushroom', count: 2, gap: 2.4 },
-        { type: 'slime', count: 6, gap: 0.85 },
-        { type: 'ironball', count: 2, gap: 2.0 }
-      ]
-    },
-    {
-      title: '第四波 · 连锁失衡', sub: 'VOLATILE SWARM',
-      groups: [
-        { type: 'bubble', count: 10, gap: 0.55 },
-        { type: 'ironball', count: 3, gap: 1.8 },
-        { type: 'mushroom', count: 2, gap: 2.2 }
-      ]
-    },
-    {
-      title: '第五波 · 全实验体暴走', sub: 'CONTAINMENT BREACH',
-      groups: [
-        { type: 'ironball', count: 3, gap: 1.6 },
-        { type: 'mushroom', count: 3, gap: 1.7 },
-        { type: 'slime', count: 8, gap: 0.75 },
-        { type: 'bubble', count: 8, gap: 0.5 }
-      ]
-    },
-    {
-      title: '最终波 · 失控反应釜降临', sub: 'THE RUNAWAY REACTOR AWAKENS',
-      groups: [
-        { type: 'mushroom', count: 2, gap: 2.2 },
-        { type: 'boss', count: 1, gap: 2.5 },
-        { type: 'ironball', count: 2, gap: 3.0 }
-      ]
-    }
+    { label: '第 1 波 · 酸液史莱姆', groups: [{ type: 'slime', count: 7, gap: 1.1 }] },
+    { label: '第 2 波 · 铁球与易爆气泡', groups: [{ type: 'ironball', count: 2, gap: 2.1 }, { type: 'bubble', count: 6, gap: 0.75 }, { type: 'slime', count: 4, gap: 0.95 }] },
+    { label: '第 3 波 · 变异蘑菇护盾', groups: [{ type: 'mushroom', count: 2, gap: 2.3 }, { type: 'slime', count: 6, gap: 0.85 }, { type: 'ironball', count: 2, gap: 2.0 }] },
+    { label: '第 4 波 · 高速气泡群', groups: [{ type: 'bubble', count: 10, gap: 0.55 }, { type: 'ironball', count: 3, gap: 1.8 }, { type: 'mushroom', count: 2, gap: 2.2 }] },
+    { label: '第 5 波 · 实验体混编', groups: [{ type: 'ironball', count: 3, gap: 1.6 }, { type: 'mushroom', count: 3, gap: 1.7 }, { type: 'slime', count: 8, gap: 0.75 }, { type: 'bubble', count: 8, gap: 0.5 }] },
+    { label: '最终波 · 失控反应釜', groups: [{ type: 'mushroom', count: 2, gap: 2.2 }, { type: 'boss', count: 1, gap: 2.5 }, { type: 'ironball', count: 2, gap: 3.0 }] }
   ];
 
-  // ---------- Game State ----------
-  let W = 0, H = 0, TILE_W = 84, TILE_H = 44, ORIGIN_X = 0, ORIGIN_Y = 0;
-  let state = 'intro'; // intro | playing | victory | defeat
-  let souls = 220;
+  // ---------- Viewport / Grid Geometry ----------
+  let W = 0, H = 0, CELL = 64, OX = 0, OY = 0;
+
+  function resize() {
+    const rect = canvas.parentElement.getBoundingClientRect();
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = rect.width;
+    H = rect.height;
+    canvas.width = Math.round(W * dpr);
+    canvas.height = Math.round(H * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    const padX = 28, padY = 24;
+    CELL = Math.max(34, Math.min((W - padX * 2) / COLS, (H - padY * 2) / ROWS));
+    OX = (W - COLS * CELL) * 0.5;
+    OY = (H - ROWS * CELL) * 0.5;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  const toScreen = (gx, gy) => ({ x: OX + (gx + 0.5) * CELL, y: OY + (gy + 0.5) * CELL });
+
+  // ---------- State ----------
+  let state = 'playing'; // playing | victory | defeat
+  let energy = 220;
   let coreHp = 20;
   let waveIdx = 0;
+  let waveActive = false;
   let gameSpeed = 1;
   let muted = false;
   let selectedTool = 'physics';
@@ -711,24 +484,14 @@ html, body {
   const projectiles = [];
   const particles = [];
   const floatTexts = [];
-  const ashMotes = Array.from({ length: 58 }, () => ({
-    x: Math.random(), y: Math.random(),
-    vx: (Math.random() - 0.5) * 0.015,
-    vy: -0.012 - Math.random() * 0.025,
-    r: 0.8 + Math.random() * 1.8,
-    ember: Math.random() < 0.32,
-    phase: Math.random() * Math.PI * 2
-  }));
-
   let spawnQueue = [];
   let spawnTimer = 0;
-  let waveActive = false;
+  let toastTimer = 0;
   let shakeTime = 0;
   let shakeMag = 0;
-  let bannerTimer = 0;
   let nextEnemyId = 1;
 
-  // ---------- Web Audio (Souls-like Heavy Chimes & Impacts) ----------
+  // ---------- Crisp Toy SFX ----------
   let audioCtx;
   function getVol() {
     if (muted) return 0;
@@ -744,179 +507,144 @@ html, body {
       const now = audioCtx.currentTime;
       const osc = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
-      if (kind === 'bell') {
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(196, now);
-        osc.frequency.exponentialRampToValueAtTime(194, now + 1.4);
-        gain.gain.setValueAtTime(0.001, now);
-        gain.gain.exponentialRampToValueAtTime(0.24 * v, now + 0.02);
-        gain.gain.exponentialRampToValueAtTime(0.0001, now + 1.5);
+      if (kind === 'build') {
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(340, now);
+        osc.frequency.exponentialRampToValueAtTime(560, now + 0.08);
+        gain.gain.setValueAtTime(0.14 * v, now);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.12);
         osc.connect(gain).connect(audioCtx.destination);
-        osc.start(now); osc.stop(now + 1.55);
+        osc.start(now); osc.stop(now + 0.13);
+      } else if (kind === 'wave') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(440, now);
+        osc.frequency.setValueAtTime(587, now + 0.09);
+        gain.gain.setValueAtTime(0.15 * v, now);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.28);
+        osc.connect(gain).connect(audioCtx.destination);
+        osc.start(now); osc.stop(now + 0.3);
       } else if (kind === 'boom') {
         osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(118, now);
-        osc.frequency.exponentialRampToValueAtTime(34, now + 0.34);
-        gain.gain.setValueAtTime(0.24 * v, now);
-        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.36);
+        osc.frequency.setValueAtTime(160, now);
+        osc.frequency.exponentialRampToValueAtTime(45, now + 0.24);
+        gain.gain.setValueAtTime(0.18 * v, now);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.26);
         osc.connect(gain).connect(audioCtx.destination);
-        osc.start(now); osc.stop(now + 0.38);
+        osc.start(now); osc.stop(now + 0.28);
       } else if (kind === 'zap') {
         osc.type = 'triangle';
-        osc.frequency.setValueAtTime(660, now);
-        osc.frequency.exponentialRampToValueAtTime(220, now + 0.12);
-        gain.gain.setValueAtTime(0.12 * v, now);
-        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.13);
+        osc.frequency.setValueAtTime(720, now);
+        osc.frequency.exponentialRampToValueAtTime(280, now + 0.09);
+        gain.gain.setValueAtTime(0.09 * v, now);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.1);
         osc.connect(gain).connect(audioCtx.destination);
-        osc.start(now); osc.stop(now + 0.14);
-      } else if (kind === 'build') {
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(280, now);
-        osc.frequency.exponentialRampToValueAtTime(420, now + 0.09);
-        gain.gain.setValueAtTime(0.14 * v, now);
-        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.16);
+        osc.start(now); osc.stop(now + 0.11);
+      } else {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(240, now);
+        osc.frequency.exponentialRampToValueAtTime(120, now + 0.06);
+        gain.gain.setValueAtTime(0.07 * v, now);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.07);
         osc.connect(gain).connect(audioCtx.destination);
-        osc.start(now); osc.stop(now + 0.17);
-      } else if (kind === 'hit') {
-        osc.type = 'square';
-        osc.frequency.setValueAtTime(140, now);
-        osc.frequency.exponentialRampToValueAtTime(70, now + 0.07);
-        gain.gain.setValueAtTime(0.06 * v, now);
-        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.08);
-        osc.connect(gain).connect(audioCtx.destination);
-        osc.start(now); osc.stop(now + 0.09);
+        osc.start(now); osc.stop(now + 0.08);
       }
     } catch {}
   }
 
-  // ---------- 2.5D Isometric Projection ----------
-  function resize() {
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    W = window.innerWidth;
-    H = window.innerHeight;
-    canvas.width = Math.round(W * dpr);
-    canvas.height = Math.round(H * dpr);
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-    // Fit 12x10 iso diamond cleanly in viewport
-    const span = COLS + ROWS;
-    TILE_W = Math.max(46, Math.min(92, (W * 0.86) / (span * 0.5)));
-    TILE_H = TILE_W * 0.51;
-    ORIGIN_X = W * 0.5 + (ROWS - COLS) * (TILE_W * 0.25);
-    ORIGIN_Y = H * 0.5 - (COLS + ROWS) * (TILE_H * 0.24) - 8;
-  }
-  window.addEventListener('resize', resize);
-  resize();
-
-  function iso(gx, gy, gz = 0) {
-    return {
-      x: ORIGIN_X + (gx - gy) * (TILE_W * 0.5),
-      y: ORIGIN_Y + (gx + gy) * (TILE_H * 0.5) - gz
-    };
+  // ---------- Helpers ----------
+  function showToast(text) {
+    const el = byId('waveToast');
+    el.textContent = text;
+    el.classList.add('show');
+    toastTimer = 2.2;
   }
 
-  function screenToGrid(sx, sy) {
-    const dx = sx - ORIGIN_X;
-    const dy = sy - ORIGIN_Y;
-    const gx = (dx / (TILE_W * 0.5) + dy / (TILE_H * 0.5)) * 0.5;
-    const gy = (dy / (TILE_H * 0.5) - dx / (TILE_W * 0.5)) * 0.5;
-    return { x: gx, y: gy };
-  }
-
-  // ---------- UI Helpers ----------
-  function showBanner(main, sub, variant = '') {
-    const el = byId('banner');
-    el.className = 'banner show ' + variant;
-    byId('bannerMain').textContent = main;
-    byId('bannerSub').textContent = sub;
-    bannerTimer = variant ? 999 : 2.6;
-  }
-
-  function addShake(mag, dur = 0.24) {
+  function addShake(mag, dur = 0.2) {
     shakeMag = Math.max(shakeMag, mag);
     shakeTime = Math.max(shakeTime, dur);
   }
 
-  function addFloat(gx, gy, gz, text, color = '#e2c282') {
-    floatTexts.push({ gx, gy, gz, text, color, life: 1.15, maxLife: 1.15 });
+  function addFloat(gx, gy, text, color = '#1b222c') {
+    const p = toScreen(gx, gy);
+    floatTexts.push({ x: p.x, y: p.y - 14, text, color, life: 1.0, maxLife: 1.0 });
   }
 
-  function spawnBurst(gx, gy, gz, color, count = 14, speed = 70) {
-    const p = iso(gx, gy, gz);
+  function spawnBurst(gx, gy, color, count = 12, speed = 85) {
+    const p = toScreen(gx, gy);
     for (let i = 0; i < count; i++) {
       const a = Math.random() * Math.PI * 2;
-      const s = speed * (0.35 + Math.random() * 0.9);
+      const s = speed * (0.35 + Math.random() * 0.85);
       particles.push({
         x: p.x, y: p.y,
-        vx: Math.cos(a) * s, vy: Math.sin(a) * s - 28,
-        r: 2 + Math.random() * 3.5,
-        color, life: 0.45 + Math.random() * 0.35, maxLife: 0.8
+        vx: Math.cos(a) * s, vy: Math.sin(a) * s - 20,
+        r: 2.5 + Math.random() * 3.5,
+        color, life: 0.35 + Math.random() * 0.3, maxLife: 0.65
       });
     }
   }
 
   function updateHud() {
-    byId('soulsVal').textContent = Math.floor(souls);
+    byId('energyVal').textContent = Math.floor(energy);
     byId('hpVal').textContent = Math.max(0, coreHp);
     byId('waveVal').textContent = `${waveIdx} / ${WAVES.length}`;
 
-    document.querySelectorAll('.tower-slot').forEach(slot => {
-      const type = slot.dataset.tower;
-      slot.classList.toggle('selected', !selectedTower && selectedTool === type);
-      slot.classList.toggle('poor', souls < TOWERS[type].cost);
+    document.querySelectorAll('.tower-btn').forEach(btn => {
+      const type = btn.dataset.tower;
+      btn.classList.toggle('selected', !selectedTower && selectedTool === type);
+      btn.classList.toggle('poor', energy < TOWERS[type].cost);
     });
 
     const nextBtn = byId('nextWaveBtn');
     if (waveIdx >= WAVES.length) {
       nextBtn.disabled = true;
-      nextBtn.textContent = waveActive ? '最终决战中' : '全部波次结束';
+      nextBtn.textContent = waveActive ? '最终波进行中' : '全部完成';
     } else if (waveActive) {
       nextBtn.disabled = true;
-      nextBtn.textContent = `第 ${waveIdx} 波交战中`;
+      nextBtn.textContent = `第 ${waveIdx} 波进行中`;
     } else {
       nextBtn.disabled = false;
-      nextBtn.textContent = waveIdx === 0 ? '点燃烽火 · 第 1 波' : `点燃烽火 · 第 ${waveIdx + 1} 波`;
+      nextBtn.textContent = waveIdx === 0 ? '开始第 1 波' : `下一波 (${waveIdx + 1}/${WAVES.length})`;
     }
 
-    // Update info panel
-    const actions = byId('infoActions');
+    const tip = byId('actionTip');
+    const upBtn = byId('upgradeBtn');
+    const sellBtn = byId('sellBtn');
+
     if (selectedTower) {
       const spec = TOWERS[selectedTower.type];
-      byId('infoTitle').textContent = `${spec.discipline} · ${spec.name} Lv.${selectedTower.level}`;
-      byId('infoDesc').textContent = `攻击 ${Math.round(selectedTower.dmg)} · 射程 ${selectedTower.range.toFixed(1)} · ${spec.desc}`;
-      actions.hidden = false;
-      const upBtn = byId('upgradeBtn');
+      tip.textContent = `${spec.name} Lv.${selectedTower.level} · 攻 ${Math.round(selectedTower.dmg)}`;
+      upBtn.hidden = false;
+      sellBtn.hidden = false;
       if (selectedTower.level >= 3) {
         upBtn.disabled = true;
-        upBtn.textContent = '已臻极境';
+        upBtn.textContent = '已满级';
       } else {
         const upCost = spec.upgradeCost[selectedTower.level - 1];
-        upBtn.disabled = souls < upCost;
-        upBtn.textContent = `强化 (${upCost} 魂)`;
+        upBtn.disabled = energy < upCost;
+        upBtn.textContent = `升级 (${upCost})`;
       }
-      byId('sellBtn').textContent = `拆解 (+${Math.round(selectedTower.invested * 0.7)} 魂)`;
+      sellBtn.textContent = `拆除 +${Math.round(selectedTower.invested * 0.7)}`;
     } else {
       const spec = TOWERS[selectedTool];
-      byId('infoTitle').textContent = `${spec.discipline} · ${spec.name}（${spec.cost} 魂）`;
-      byId('infoDesc').textContent = spec.desc;
-      actions.hidden = true;
+      tip.textContent = `${spec.name}：${spec.tip}`;
+      upBtn.hidden = true;
+      sellBtn.hidden = true;
     }
 
-    // Boss bar
     const boss = enemies.find(e => e.isBoss && !e.dead);
-    const wrap = byId('bossWrap');
+    const bar = byId('bossBar');
     if (boss) {
-      wrap.classList.add('show');
+      bar.classList.add('show');
       byId('bossFill').style.width = `${Math.max(0, (boss.hp / boss.maxHp) * 100)}%`;
       byId('bossShield').classList.toggle('active', boss.shieldTimer > 0);
-      const phases = ['阶段一 · 泄压产怪', '阶段二 · 受击喷发', '阶段三 · 孢子异变（护盾）', '阶段四 · 终极解体临界'];
+      const phases = ['阶段 1 · 产怪', '阶段 2 · 喷泡', '阶段 3 · 孢子盾', '阶段 4 · 临界解体'];
       byId('bossPhase').textContent = phases[boss.phase - 1];
     } else {
-      wrap.classList.remove('show');
+      bar.classList.remove('show');
     }
   }
 
-  // ---------- Wave & Spawning ----------
+  // ---------- Gameplay ----------
   function startNextWave() {
     if (state !== 'playing' || waveActive || waveIdx >= WAVES.length) return;
     const wave = WAVES[waveIdx];
@@ -925,25 +653,24 @@ html, body {
     spawnQueue = [];
     for (const g of wave.groups) {
       for (let i = 0; i < g.count; i++) {
-        spawnQueue.push({ type: g.type, delay: i === 0 ? 0.4 : g.gap });
+        spawnQueue.push({ type: g.type, delay: i === 0 ? 0.35 : g.gap });
       }
     }
-    spawnTimer = 0.3;
-    playSfx('bell');
-    showBanner(wave.title, wave.sub);
+    spawnTimer = 0.25;
+    playSfx('wave');
+    showToast(wave.label);
     updateHud();
   }
 
   function createEnemy(type, segIdx = 0, segT = 0, inherited = null) {
     const spec = ENEMIES[type];
-    const start = PATH[segIdx];
-    const next = PATH[Math.min(PATH.length - 1, segIdx + 1)];
+    const a = PATH[segIdx], b = PATH[Math.min(PATH.length - 1, segIdx + 1)];
+    const mult = spec.isBoss ? 1 : (1 + (waveIdx - 1) * 0.09);
     const e = {
       id: nextEnemyId++,
       type,
-      name: spec.name,
-      hp: spec.hp * (1 + (waveIdx - 1) * 0.09),
-      maxHp: spec.hp * (1 + (waveIdx - 1) * 0.09),
+      hp: spec.hp * mult,
+      maxHp: spec.hp * mult,
       speed: spec.speed,
       baseArmor: spec.armor,
       reward: spec.reward,
@@ -956,10 +683,9 @@ html, body {
       isBoss: !!spec.isBoss,
       seg: segIdx,
       t: segT,
-      x: start.x + (next.x - start.x) * segT,
-      y: start.y + (next.y - start.y) * segT,
+      x: a.x + (b.x - a.x) * segT,
+      y: a.y + (b.y - a.y) * segT,
       progress: segIdx + segT,
-      // Statuses
       corroded: 0,
       infected: inherited?.infected || 0,
       infectedDps: inherited?.infectedDps || 0,
@@ -967,102 +693,81 @@ html, body {
       flingTimer: 0,
       flingCooldown: 0,
       auraBuff: false,
-      // Boss state
       phase: 1,
-      bossSpawnCd: 4.5,
+      bossSpawnCd: 4.4,
       bossBubbleDamage: 0,
       shieldTimer: 0,
       p3Triggered: false,
       dead: false
     };
-    if (e.isBoss) {
-      e.hp = spec.hp;
-      e.maxHp = spec.hp;
-    }
     enemies.push(e);
     return e;
   }
 
-  // ---------- Cross-Discipline Reactions & Damage ----------
   function triggerBubbleExplosion(source) {
     if (source.dead) return;
     source.dead = true;
-    souls += source.reward;
+    energy += source.reward;
     playSfx('boom');
-    addShake(7, 0.28);
-    spawnBurst(source.x, source.y, 16, '#ff8e3c', 22, 110);
-    addFloat(source.x, source.y, 28, '连锁引爆！', '#ffae52');
+    addShake(6, 0.22);
+    spawnBurst(source.x, source.y, '#f9825c', 18, 120);
+    addFloat(source.x, source.y, '连锁引爆!', '#d94d26');
 
-    // Damage nearby enemies and chain-detonate adjacent volatile bubbles!
-    const blastRange = 2.0;
     for (const other of enemies) {
       if (other.dead || other.id === source.id) continue;
-      const dist = Math.hypot(other.x - source.x, other.y - source.y);
-      if (dist <= blastRange) {
-        if (other.volatile) {
-          setTimeout(() => triggerBubbleExplosion(other), 90);
-        } else {
-          damageEnemy(other, 95, 'fire');
-        }
+      if (Math.hypot(other.x - source.x, other.y - source.y) <= 2.0) {
+        if (other.volatile) setTimeout(() => triggerBubbleExplosion(other), 85);
+        else damageEnemy(other, 95, 'fire');
       }
     }
   }
 
   function damageEnemy(e, rawDmg, elem = 'normal') {
     if (e.dead) return;
-    let armor = e.corroded > 0 ? Math.min(e.baseArmor, 0.15) : e.baseArmor;
+    const armor = e.corroded > 0 ? Math.min(e.baseArmor, 0.15) : e.baseArmor;
     let mult = 1 - armor;
-    if (e.auraBuff && !e.aura) mult *= 0.55; // Mutant mushroom spore shield
-    if (e.isBoss && e.shieldTimer > 0) mult *= 0.45; // Boss P3 spore shield
-    if (e.marked > 0) mult *= 1.45; // Algorithm Mark bonus
+    if (e.auraBuff && !e.aura) mult *= 0.55;
+    if (e.isBoss && e.shieldTimer > 0) mult *= 0.45;
+    if (e.marked > 0) mult *= 1.45;
 
     const dmg = Math.max(2, rawDmg * mult);
     e.hp -= dmg;
 
-    // Boss Phase 2 damage threshold erupts Unstable Bubbles!
     if (e.isBoss && e.phase === 2) {
       e.bossBubbleDamage += dmg;
       if (e.bossBubbleDamage >= 260) {
         e.bossBubbleDamage = 0;
-        const backSeg = Math.max(0, e.seg);
-        createEnemy('bubble', backSeg, Math.max(0, e.t - 0.15));
-        createEnemy('bubble', backSeg, Math.min(0.95, e.t + 0.15));
-        addFloat(e.x, e.y, 44, '受击喷发 · 气泡！', '#ff9f52');
+        createEnemy('bubble', e.seg, Math.max(0, e.t - 0.14));
+        createEnemy('bubble', e.seg, Math.min(0.94, e.t + 0.14));
+        addFloat(e.x, e.y, '喷出气泡!', '#e8624a');
       }
     }
 
-    // Volatile bubble ignited by fire or electric overload
     if (e.volatile && (elem === 'fire' || elem === 'electric')) {
       triggerBubbleExplosion(e);
       return;
     }
 
-    if (e.hp <= 0) {
-      killEnemy(e);
-    }
+    if (e.hp <= 0) killEnemy(e);
   }
 
   function killEnemy(e) {
     if (e.dead) return;
     e.dead = true;
-    souls += e.reward;
-    spawnBurst(e.x, e.y, 12, e.color, e.isBoss ? 40 : 12, e.isBoss ? 140 : 65);
+    energy += e.reward;
+    spawnBurst(e.x, e.y, e.color, e.isBoss ? 34 : 10, e.isBoss ? 140 : 75);
 
-    // Acid Slime split + Bio-Infection propagation!
     if (e.split) {
       const spread = e.infected > 0 ? { infected: Math.max(4, e.infected), infectedDps: Math.max(14, e.infectedDps) } : null;
       createEnemy('miniSlime', e.seg, Math.max(0, e.t - 0.12), spread);
-      createEnemy('miniSlime', e.seg, Math.min(0.96, e.t + 0.12), spread);
-      if (spread) {
-        addFloat(e.x, e.y, 26, '分裂传染！', '#97d690');
-      }
+      createEnemy('miniSlime', e.seg, Math.min(0.95, e.t + 0.12), spread);
+      if (spread) addFloat(e.x, e.y, '分裂传染!', '#2f8f37');
     }
 
-    // Boss Phase 4 Final Disintegration!
     if (e.isBoss) {
       playSfx('boom');
-      addShake(12, 0.5);
-      addFloat(e.x, e.y, 46, '终极解体！', '#ffae52');
+      addShake(10, 0.4);
+      addFloat(e.x, e.y, '反应釜解体!', '#e8624a');
       for (let i = 0; i < 4; i++) {
         createEnemy(i % 2 === 0 ? 'miniSlime' : 'bubble', e.seg, Math.max(0.05, Math.min(0.95, e.t + (i - 1.5) * 0.12)));
       }
@@ -1070,98 +775,107 @@ html, body {
     updateHud();
   }
 
-  // ---------- Tower Placement & Actions ----------
   function placeTower(pad) {
     const spec = TOWERS[selectedTool];
-    if (souls < spec.cost) {
-      addFloat(pad.x, pad.y, 24, '余烬灵魂不足', '#e06253');
+    if (energy < spec.cost) {
+      addFloat(pad.x, pad.y, '能量不足', '#c94a34');
       return;
     }
-    souls -= spec.cost;
+    energy -= spec.cost;
     const t = {
-      x: pad.x, y: pad.y,
-      type: selectedTool,
-      level: 1,
-      invested: spec.cost,
-      range: spec.range,
-      rate: spec.rate,
-      dmg: spec.dmg,
-      cd: 0.1,
-      pulse: 0
+      x: pad.x, y: pad.y, type: selectedTool, level: 1,
+      invested: spec.cost, range: spec.range, rate: spec.rate, dmg: spec.dmg,
+      cd: 0.1, pulse: 0
     };
     towers.push(t);
     selectedTower = t;
     playSfx('build');
-    spawnBurst(pad.x, pad.y, 18, spec.color, 12, 55);
+    spawnBurst(pad.x, pad.y, spec.color, 10, 60);
     updateHud();
   }
 
-  function upgradeSelectedTower() {
+  function upgradeSelected() {
     if (!selectedTower || selectedTower.level >= 3) return;
     const spec = TOWERS[selectedTower.type];
     const cost = spec.upgradeCost[selectedTower.level - 1];
-    if (souls < cost) return;
-    souls -= cost;
+    if (energy < cost) return;
+    energy -= cost;
     selectedTower.invested += cost;
     selectedTower.level++;
     selectedTower.dmg *= 1.42;
     selectedTower.range += 0.35;
     selectedTower.rate *= 1.12;
     playSfx('build');
-    spawnBurst(selectedTower.x, selectedTower.y, 24, '#e2c282', 16, 70);
-    addFloat(selectedTower.x, selectedTower.y, 36, `强化至 Lv.${selectedTower.level}`, '#e2c282');
+    spawnBurst(selectedTower.x, selectedTower.y, '#f4b731', 14, 75);
+    addFloat(selectedTower.x, selectedTower.y, `Lv.${selectedTower.level}`, '#b57b00');
     updateHud();
   }
 
-  function sellSelectedTower() {
+  function sellSelected() {
     if (!selectedTower) return;
     const refund = Math.round(selectedTower.invested * 0.7);
-    souls += refund;
+    energy += refund;
     const idx = towers.indexOf(selectedTower);
     if (idx >= 0) towers.splice(idx, 1);
-    addFloat(selectedTower.x, selectedTower.y, 26, `+${refund} 魂`, '#e2c282');
+    addFloat(selectedTower.x, selectedTower.y, `+${refund}`, '#1d8a78');
     selectedTower = null;
     playSfx('hit');
     updateHud();
   }
 
-  // ---------- Main Update Loop ----------
+  function finishGame(won) {
+    state = won ? 'victory' : 'defeat';
+    playSfx(won ? 'wave' : 'boom');
+    byId('endTitle').textContent = won ? '防守成功' : '核心受损';
+    byId('endDesc').textContent = won
+      ? `成功击破「失控反应釜」，核心剩余耐久 ${coreHp} / 20。`
+      : `防线在第 ${waveIdx} 波被突破。试试电磁甩铁球、化学引爆气泡、算法标记蘑菇。`;
+    byId('endOverlay').hidden = false;
+    updateHud();
+  }
+
+  function resetGame() {
+    energy = 220;
+    coreHp = 20;
+    waveIdx = 0;
+    waveActive = false;
+    spawnQueue = [];
+    towers.length = 0;
+    enemies.length = 0;
+    projectiles.length = 0;
+    particles.length = 0;
+    floatTexts.length = 0;
+    selectedTower = null;
+    state = 'playing';
+    byId('endOverlay').hidden = true;
+    updateHud();
+  }
+
+  // ---------- Update ----------
   function update(dt) {
-    if (bannerTimer > 0 && bannerTimer < 900) {
-      bannerTimer -= dt;
-      if (bannerTimer <= 0) byId('banner').classList.remove('show');
+    if (toastTimer > 0) {
+      toastTimer -= dt;
+      if (toastTimer <= 0) byId('waveToast').classList.remove('show');
     }
     if (shakeTime > 0) {
       shakeTime = Math.max(0, shakeTime - dt);
       if (shakeTime === 0) shakeMag = 0;
     }
 
-    // Drift ash motes always
-    for (const m of ashMotes) {
-      m.x = (m.x + m.vx * dt + 1) % 1;
-      m.y = (m.y + m.vy * dt + 1) % 1;
-    }
-
-    // Update particles & float texts
     for (let i = particles.length - 1; i >= 0; i--) {
       const p = particles[i];
-      p.x += p.vx * dt;
-      p.y += p.vy * dt;
-      p.vy += 120 * dt;
-      p.life -= dt;
+      p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 140 * dt; p.life -= dt;
       if (p.life <= 0) particles.splice(i, 1);
     }
     for (let i = floatTexts.length - 1; i >= 0; i--) {
       const f = floatTexts[i];
-      f.gz += 22 * dt;
-      f.life -= dt;
+      f.y -= 26 * dt; f.life -= dt;
       if (f.life <= 0) floatTexts.splice(i, 1);
     }
 
     if (state !== 'playing') return;
     const sdt = dt * gameSpeed;
 
-    // Spawn queue
     if (waveActive && spawnQueue.length > 0) {
       spawnTimer -= sdt;
       if (spawnTimer <= 0) {
@@ -1171,7 +885,6 @@ html, body {
       }
     }
 
-    // Reset Mushroom Spore Aura
     for (const e of enemies) e.auraBuff = false;
     for (const m of enemies) {
       if (m.dead || !m.aura) continue;
@@ -1181,7 +894,6 @@ html, body {
       }
     }
 
-    // Update Enemies
     for (let i = enemies.length - 1; i >= 0; i--) {
       const e = enemies[i];
       if (e.dead) { enemies.splice(i, 1); continue; }
@@ -1197,7 +909,6 @@ html, body {
         if (e.dead) continue;
       }
 
-      // Boss 4-Phase State Machine
       if (e.isBoss) {
         const pct = e.hp / e.maxHp;
         if (pct <= 0.1) e.phase = 4;
@@ -1207,30 +918,24 @@ html, body {
             e.p3Triggered = true;
             e.shieldTimer = 9;
             createEnemy('mushroom', e.seg, Math.max(0, e.t - 0.1));
-            addFloat(e.x, e.y, 48, '孢子异变 · 护盾开启！', '#9ed998');
-            playSfx('bell');
+            addFloat(e.x, e.y, '孢子护盾!', '#2f8f37');
           }
-        } else if (pct <= 0.7) {
-          e.phase = 2;
-        }
+        } else if (pct <= 0.7) e.phase = 2;
 
         if (e.phase === 1) {
           e.bossSpawnCd -= sdt;
           if (e.bossSpawnCd <= 0) {
             e.bossSpawnCd = 4.2;
             createEnemy('slime', e.seg, Math.min(0.95, e.t + 0.08));
-            addFloat(e.x, e.y, 44, '泄压产怪', '#82ba7b');
           }
         }
       }
 
-      // Movement (including Magnetic Fling backward knockback!)
-      const slowMult = e.infected > 0 ? 0.74 : 1;
-      let move = e.speed * slowMult * sdt;
+      const slow = e.infected > 0 ? 0.74 : 1;
+      let move = e.speed * slow * sdt;
       if (e.flingTimer > 0) {
         e.flingTimer -= sdt;
-        move = -2.8 * sdt; // hurled backwards!
-        // Collide with trailing enemies for crush damage!
+        move = -2.8 * sdt;
         for (const other of enemies) {
           if (other.dead || other.id === e.id) continue;
           if (Math.hypot(other.x - e.x, other.y - e.y) < 0.65) {
@@ -1247,22 +952,15 @@ html, body {
         if (e.seg > 0) { e.seg--; e.t += 1; }
         else e.t = 0;
       } else if (e.t >= 1) {
-        e.seg++;
-        e.t -= 1;
+        e.seg++; e.t -= 1;
         if (e.seg >= PATH.length - 1) {
-          // Reached Core Machine!
           coreHp -= e.isBoss ? 10 : 1;
           e.dead = true;
           playSfx('boom');
-          addShake(9, 0.35);
-          spawnBurst(11, 7, 22, '#e06253', 18, 90);
+          addShake(7, 0.25);
+          spawnBurst(11, 6, '#e8624a', 14, 90);
           updateHud();
-          if (coreHp <= 0) {
-            state = 'defeat';
-            playSfx('bell');
-            showBanner('核 心 熄 灭', 'THE CORE HAS FADED', 'death');
-            setTimeout(() => openEndModal(false), 1700);
-          }
+          if (coreHp <= 0) finishGame(false);
           continue;
         }
       }
@@ -1273,30 +971,23 @@ html, body {
       e.progress = e.seg + e.t;
     }
 
-    // Update Towers & Fire
     for (const t of towers) {
       t.pulse = Math.max(0, t.pulse - sdt * 3);
       t.cd -= sdt;
       if (t.cd > 0) continue;
 
-      // Target selection: Compute prioritizes Mushroom / Boss; others prioritize furthest along path
-      let target = null;
-      let bestScore = -1;
+      let target = null, best = -1;
       for (const e of enemies) {
         if (e.dead) continue;
-        const d = Math.hypot(e.x - t.x, e.y - t.y);
-        if (d > t.range) continue;
+        if (Math.hypot(e.x - t.x, e.y - t.y) > t.range) continue;
         let score = e.progress;
         if (t.type === 'compute') {
           if (e.aura) score += 20;
           if (e.isBoss) score += 16;
           if (e.marked <= 0) score += 6;
-        } else if (t.type === 'physics' && e.magnetic && e.flingCooldown <= 0) {
-          score += 12;
-        } else if (t.type === 'chemistry' && e.volatile) {
-          score += 10;
-        }
-        if (score > bestScore) { bestScore = score; target = e; }
+        } else if (t.type === 'physics' && e.magnetic && e.flingCooldown <= 0) score += 12;
+        else if (t.type === 'chemistry' && e.volatile) score += 10;
+        if (score > best) { best = score; target = e; }
       }
 
       if (target) {
@@ -1306,16 +997,11 @@ html, body {
       }
     }
 
-    // Update Projectiles
     for (let i = projectiles.length - 1; i >= 0; i--) {
       const p = projectiles[i];
       p.life -= sdt;
-      if (p.instant) {
-        if (p.life <= 0) projectiles.splice(i, 1);
-        continue;
-      }
-      const dx = p.tx - p.x, dy = p.ty - p.y;
-      const dist = Math.hypot(dx, dy);
+      if (p.instant) { if (p.life <= 0) projectiles.splice(i, 1); continue; }
+      const dx = p.tx - p.x, dy = p.ty - p.y, dist = Math.hypot(dx, dy);
       const step = p.speed * sdt;
       if (dist <= step || p.life <= 0) {
         onProjectileHit(p);
@@ -1326,18 +1012,12 @@ html, body {
       }
     }
 
-    // Check Wave End / Victory
     if (waveActive && spawnQueue.length === 0 && enemies.length === 0) {
       waveActive = false;
-      souls += 35 + waveIdx * 10;
-      if (waveIdx >= WAVES.length) {
-        state = 'victory';
-        playSfx('bell');
-        showBanner('火 已 续 燃', 'LAB CORE PRESERVED', 'victory');
-        setTimeout(() => openEndModal(true), 1900);
-      } else {
-        addFloat(11, 7, 36, `波次清剿 +${35 + waveIdx * 10} 魂`, '#e2c282');
-      }
+      const bonus = 35 + waveIdx * 10;
+      energy += bonus;
+      if (waveIdx >= WAVES.length) finishGame(true);
+      else addFloat(11, 6, `+${bonus} 能量`, '#1d8a78');
       updateHud();
     } else if (enemies.some(e => e.isBoss)) {
       updateHud();
@@ -1347,32 +1027,25 @@ html, body {
   function fireTower(t, target) {
     if (t.type === 'physics') {
       playSfx('zap');
-      projectiles.push({
-        instant: true, x: t.x, y: t.y, tx: target.x, ty: target.y,
-        color: '#95d2ed', life: 0.16, maxLife: 0.16
-      });
-      // Magnetic Fling reaction against Iron Ball!
+      projectiles.push({ instant: true, x: t.x, y: t.y, tx: target.x, ty: target.y, color: '#2ea8b8', life: 0.14, maxLife: 0.14 });
       if (target.magnetic && target.flingCooldown <= 0) {
         target.flingTimer = 0.52;
         target.flingCooldown = 3.2;
-        addFloat(target.x, target.y, 28, '磁力甩击！', '#95d2ed');
-        addShake(4, 0.16);
+        addFloat(target.x, target.y, '磁力甩击!', '#1d8a78');
+        addShake(3.5, 0.14);
       }
       damageEnemy(target, t.dmg, 'electric');
     } else if (t.type === 'compute') {
       playSfx('zap');
-      projectiles.push({
-        instant: true, x: t.x, y: t.y, tx: target.x, ty: target.y,
-        color: '#e6c57a', life: 0.18, maxLife: 0.18
-      });
-      if (target.marked <= 0) addFloat(target.x, target.y, 30, '算法锁定 +45%', '#f5dfa8');
+      projectiles.push({ instant: true, x: t.x, y: t.y, tx: target.x, ty: target.y, color: '#3b7dd8', life: 0.16, maxLife: 0.16 });
+      if (target.marked <= 0) addFloat(target.x, target.y, '锁定 +45%', '#3b7dd8');
       target.marked = 4.5;
       damageEnemy(target, t.dmg, 'arcane');
     } else {
       projectiles.push({
         instant: false, type: t.type, dmg: t.dmg, target,
         x: t.x, y: t.y, tx: target.x, ty: target.y,
-        speed: 6.5, color: TOWERS[t.type].color, life: 1.5
+        speed: 7.0, color: TOWERS[t.type].color, life: 1.5
       });
     }
   }
@@ -1382,303 +1055,186 @@ html, body {
     if (!e || e.dead) return;
     playSfx('hit');
     if (p.type === 'chemistry') {
-      spawnBurst(e.x, e.y, 12, '#e37e3c', 8, 50);
-      if (e.magnetic && e.corroded <= 0) {
-        addFloat(e.x, e.y, 28, '酸液破甲！', '#94cf86');
-      }
+      spawnBurst(e.x, e.y, '#f48442', 7, 55);
+      if (e.magnetic && e.corroded <= 0) addFloat(e.x, e.y, '酸液破甲!', '#2f8f37');
       e.corroded = 5.5;
       damageEnemy(e, p.dmg, 'fire');
     } else if (p.type === 'biology') {
-      spawnBurst(e.x, e.y, 12, '#7db878', 7, 45);
+      spawnBurst(e.x, e.y, '#6fd15c', 6, 48);
       e.infected = 5.0;
       e.infectedDps = p.dmg * 0.72;
       damageEnemy(e, p.dmg * 0.65, 'bio');
     }
   }
 
-  // ---------- 2.5D Isometric Rendering ----------
-  function drawIsoBlock(gx, gy, h, topCol, leftCol, rightCol, strokeCol = 'rgba(0,0,0,0.45)') {
-    const p = iso(gx, gy, h);
-    const hw = TILE_W * 0.5, hh = TILE_H * 0.5;
-    // Top face
-    ctx.beginPath();
-    ctx.moveTo(p.x, p.y - hh);
-    ctx.lineTo(p.x + hw, p.y);
-    ctx.lineTo(p.x, p.y + hh);
-    ctx.lineTo(p.x - hw, p.y);
-    ctx.closePath();
-    ctx.fillStyle = topCol;
-    ctx.fill();
-    ctx.strokeStyle = strokeCol;
-    ctx.lineWidth = 1;
-    ctx.stroke();
-
-    if (h > 0) {
-      // Left extruded face
-      ctx.beginPath();
-      ctx.moveTo(p.x - hw, p.y);
-      ctx.lineTo(p.x, p.y + hh);
-      ctx.lineTo(p.x, p.y + hh + h);
-      ctx.lineTo(p.x - hw, p.y + h);
-      ctx.closePath();
-      ctx.fillStyle = leftCol;
-      ctx.fill();
-      ctx.stroke();
-
-      // Right extruded face
-      ctx.beginPath();
-      ctx.moveTo(p.x + hw, p.y);
-      ctx.lineTo(p.x, p.y + hh);
-      ctx.lineTo(p.x, p.y + hh + h);
-      ctx.lineTo(p.x + hw, p.y + h);
-      ctx.closePath();
-      ctx.fillStyle = rightCol;
-      ctx.fill();
-      ctx.stroke();
-    }
-  }
-
+  // ---------- Clean Toy-Board Rendering ----------
   function drawTower(t, now) {
-    const p = iso(t.x, t.y, 14);
-    const spec = TOWERS[t.type];
-    const pulse = t.pulse * 4;
+    const p = toScreen(t.x, t.y);
+    const pulse = t.pulse * 3;
+    const r = Math.min(CELL * 0.36, 22);
 
-    // Range indicator if selected
     if (selectedTower === t) {
       ctx.save();
       ctx.beginPath();
-      ctx.ellipse(p.x, p.y + 4, t.range * TILE_W * 0.5, t.range * TILE_H * 0.5, 0, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(184, 148, 86, 0.08)';
+      ctx.arc(p.x, p.y, t.range * CELL, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(29, 138, 120, 0.1)';
       ctx.fill();
-      ctx.strokeStyle = 'rgba(226, 194, 130, 0.55)';
-      ctx.lineWidth = 1.4;
-      ctx.setLineDash([5, 5]);
+      ctx.strokeStyle = '#1d8a78';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([6, 5]);
       ctx.stroke();
       ctx.restore();
     }
 
-    // Stone & Brass Plinth Base
-    ctx.fillStyle = '#1b1d24';
-    ctx.strokeStyle = '#8a6f42';
-    ctx.lineWidth = 1.4;
+    // Tactile circular pedestal
+    ctx.fillStyle = '#fffdf8';
+    ctx.strokeStyle = '#1b222c';
+    ctx.lineWidth = 2.4;
     ctx.beginPath();
-    ctx.ellipse(p.x, p.y + 2, 18, 10, 0, 0, Math.PI * 2);
+    ctx.arc(p.x, p.y + 2, r, 0, Math.PI * 2);
     ctx.fill();
     ctx.stroke();
 
     if (t.type === 'physics') {
-      // Tarnished Brass Tesla Spire
-      ctx.fillStyle = '#2d313c';
-      ctx.fillRect(p.x - 7, p.y - 26, 14, 26);
-      ctx.strokeStyle = '#997a48';
-      ctx.strokeRect(p.x - 7, p.y - 26, 14, 26);
-      // Coils
-      for (let i = 0; i < 2 + t.level; i++) {
-        ctx.strokeStyle = i === 0 ? '#95d2ed' : '#b89456';
-        ctx.beginPath();
-        ctx.ellipse(p.x, p.y - 10 - i * 6, 11 - i * 1.2, 4, 0, 0, Math.PI * 2);
-        ctx.stroke();
-      }
-      // Orb
-      ctx.beginPath();
-      ctx.arc(p.x, p.y - 32 - pulse * 0.4, 6 + pulse * 0.3, 0, Math.PI * 2);
-      ctx.fillStyle = '#95d2ed';
-      ctx.fill();
+      ctx.fillStyle = '#fffdf8';
+      ctx.fillRect(p.x - 6, p.y - 12, 12, 16);
+      ctx.strokeRect(p.x - 6, p.y - 12, 12, 16);
+      ctx.fillStyle = '#f4b731';
+      ctx.beginPath(); ctx.ellipse(p.x, p.y - 5, 11, 4, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = '#63c5da';
+      ctx.beginPath(); ctx.arc(p.x, p.y - 15 - pulse * 0.3, 6 + pulse * 0.3, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
     } else if (t.type === 'chemistry') {
-      // Alchemical Brazier & Alembic
-      ctx.fillStyle = '#332520';
+      ctx.fillStyle = '#fffdf8';
       ctx.beginPath();
-      ctx.moveTo(p.x - 13, p.y - 6);
-      ctx.lineTo(p.x - 9, p.y - 22);
-      ctx.lineTo(p.x + 9, p.y - 22);
-      ctx.lineTo(p.x + 13, p.y - 6);
-      ctx.closePath();
-      ctx.fill();
-      ctx.strokeStyle = '#b87643';
-      ctx.stroke();
-      // Flickering flame
-      const fl = Math.sin(now * 0.012 + t.x) * 3;
+      ctx.moveTo(p.x - 10, p.y + 6); ctx.lineTo(p.x - 5, p.y - 10);
+      ctx.lineTo(p.x + 5, p.y - 10); ctx.lineTo(p.x + 10, p.y + 6);
+      ctx.closePath(); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = '#f48442';
+      const fl = Math.sin(now * 0.012 + t.x) * 2;
       ctx.beginPath();
-      ctx.moveTo(p.x - 7, p.y - 22);
-      ctx.quadraticCurveTo(p.x, p.y - 38 - fl - pulse, p.x + 7, p.y - 22);
-      ctx.fillStyle = '#e87a38';
-      ctx.fill();
+      ctx.moveTo(p.x - 6, p.y - 10);
+      ctx.quadraticCurveTo(p.x, p.y - 24 - fl - pulse, p.x + 6, p.y - 10);
+      ctx.fill(); ctx.stroke();
     } else if (t.type === 'biology') {
-      // Pale Ashwood Monolith Tree
-      ctx.strokeStyle = '#9e9788';
-      ctx.lineWidth = 4;
-      ctx.beginPath();
-      ctx.moveTo(p.x, p.y);
-      ctx.quadraticCurveTo(p.x - 5, p.y - 16, p.x, p.y - 28);
-      ctx.stroke();
-      // Glowing verdigris spore canopy
-      ctx.fillStyle = '#4e7a56';
-      ctx.beginPath();
-      ctx.arc(p.x - 7, p.y - 26, 8, 0, Math.PI * 2);
-      ctx.arc(p.x + 7, p.y - 24, 7, 0, Math.PI * 2);
-      ctx.arc(p.x, p.y - 32, 9 + pulse * 0.4, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.strokeStyle = '#92c98e';
-      ctx.lineWidth = 1;
-      ctx.stroke();
+      ctx.fillStyle = '#a67c52';
+      ctx.fillRect(p.x - 3.5, p.y - 3, 7, 11); ctx.strokeRect(p.x - 3.5, p.y - 3, 7, 11);
+      ctx.fillStyle = '#6fd15c';
+      ctx.beginPath(); ctx.arc(p.x - 7, p.y - 6, 7, 0, Math.PI * 2); ctx.arc(p.x + 7, p.y - 6, 7, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = '#8ce079';
+      ctx.beginPath(); ctx.arc(p.x, p.y - 12, 8 + pulse * 0.3, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
     } else {
-      // Rotating Brass Astrolabe Obelisk
-      const ang = now * 0.002 + t.x;
-      ctx.fillStyle = '#25262e';
-      ctx.beginPath();
-      ctx.moveTo(p.x - 8, p.y);
-      ctx.lineTo(p.x, p.y - 26);
-      ctx.lineTo(p.x + 8, p.y);
-      ctx.closePath();
-      ctx.fill();
-      ctx.strokeStyle = '#cfa968';
-      ctx.lineWidth = 1.4;
-      ctx.stroke();
       ctx.save();
-      ctx.translate(p.x, p.y - 26);
-      ctx.rotate(ang);
-      ctx.strokeStyle = '#e6c57a';
-      ctx.strokeRect(-7, -7, 14, 14);
+      ctx.translate(p.x, p.y - 4);
+      ctx.rotate(now * 0.002 + t.x);
+      ctx.fillStyle = '#f4b731';
+      ctx.fillRect(-9, -9, 18, 18); ctx.strokeRect(-9, -9, 18, 18);
       ctx.restore();
+      ctx.fillStyle = '#3b7dd8';
+      ctx.beginPath(); ctx.arc(p.x, p.y - 4, 4, 0, Math.PI * 2); ctx.fill();
     }
 
-    // Level pips
+    // Level dots
     for (let i = 0; i < t.level; i++) {
-      ctx.fillStyle = '#e2c282';
-      ctx.fillRect(p.x - 7 + i * 6, p.y + 6, 4, 2.5);
+      ctx.fillStyle = '#f4b731';
+      ctx.strokeStyle = '#1b222c';
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      ctx.arc(p.x - (t.level - 1) * 4 + i * 8, p.y + r - 3, 3, 0, Math.PI * 2);
+      ctx.fill(); ctx.stroke();
     }
   }
 
   function drawEnemy(e, now) {
-    const bob = e.volatile ? Math.sin(now * 0.01 + e.id) * 4 : Math.abs(Math.sin(now * 0.007 + e.id)) * 2.5;
-    const p = iso(e.x, e.y, 12 + bob);
-    const ground = iso(e.x, e.y, 8);
+    const p = toScreen(e.x, e.y);
+    const bob = e.volatile ? Math.sin(now * 0.01 + e.id) * 3 : Math.abs(Math.sin(now * 0.008 + e.id)) * 2.5;
+    const scale = Math.min(1.15, CELL / 58);
+    const rad = e.radius * scale;
 
-    // Shadow on stone
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.48)';
+    if (e.aura) {
+      ctx.strokeStyle = 'rgba(76, 184, 80, 0.45)';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([5, 4]);
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 2.1 * CELL, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+
+    // Soft ground shadow
+    ctx.fillStyle = 'rgba(27, 34, 44, 0.16)';
     ctx.beginPath();
-    ctx.ellipse(ground.x, ground.y, e.radius * 0.95, e.radius * 0.5, 0, 0, Math.PI * 2);
+    ctx.ellipse(p.x, p.y + rad * 0.65, rad * 0.85, rad * 0.35, 0, 0, Math.PI * 2);
     ctx.fill();
 
-    // Mutant Mushroom Spore Aura ring
-    if (e.aura) {
-      ctx.strokeStyle = 'rgba(136, 189, 130, 0.32)';
-      ctx.lineWidth = 1.5;
-      ctx.beginPath();
-      ctx.ellipse(ground.x, ground.y, 2.1 * TILE_W * 0.45, 2.1 * TILE_H * 0.45, 0, 0, Math.PI * 2);
-      ctx.stroke();
-    }
+    ctx.strokeStyle = '#1b222c';
+    ctx.lineWidth = 2.2;
 
-    // Body per enemy type
     if (e.isBoss) {
-      // Runaway Reactor Vessel (Iron-clad dark alchemical cauldron on mechanical legs)
-      const jitter = e.phase === 4 ? (Math.random() - 0.5) * 3 : 0;
-      const bx = p.x + jitter, by = p.y;
-      ctx.fillStyle = '#2d2322';
-      ctx.strokeStyle = '#b8844c';
-      ctx.lineWidth = 2;
+      const jx = e.phase === 4 ? (Math.random() - 0.5) * 3 : 0;
+      const bx = p.x + jx, by = p.y - bob;
+      // Legs
       ctx.beginPath();
-      ctx.arc(bx, by - 14, 24, 0, Math.PI * 2);
-      ctx.fill();
+      ctx.moveTo(bx - 12, by + 12); ctx.lineTo(bx - 16, by + 22);
+      ctx.moveTo(bx + 12, by + 12); ctx.lineTo(bx + 16, by + 22);
       ctx.stroke();
-      // Glowing ember core window
-      ctx.fillStyle = e.phase === 3 ? '#77b875' : '#e86a2c';
-      ctx.beginPath();
-      ctx.arc(bx, by - 14, 11 + Math.sin(now * 0.008) * 1.5, 0, Math.PI * 2);
-      ctx.fill();
-      // Spore shield halo in Phase 3
+      // Vessel body
+      ctx.fillStyle = '#9c422c';
+      ctx.beginPath(); ctx.roundRect(bx - rad, by - rad, rad * 2, rad * 1.8, 12); ctx.fill(); ctx.stroke();
+      // Glass window
+      ctx.fillStyle = e.phase === 3 ? '#8ce079' : '#f4b731';
+      ctx.beginPath(); ctx.arc(bx, by - 2, rad * 0.48, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
       if (e.shieldTimer > 0) {
-        ctx.strokeStyle = '#97db93';
-        ctx.lineWidth = 2.5;
-        ctx.beginPath();
-        ctx.arc(bx, by - 14, 30, 0, Math.PI * 2);
-        ctx.stroke();
+        ctx.strokeStyle = '#4cb850';
+        ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.arc(bx, by - 2, rad + 8, 0, Math.PI * 2); ctx.stroke();
       }
     } else if (e.magnetic) {
-      // Runaway Iron Sphere (heavy spiked dark metal)
-      ctx.fillStyle = e.corroded > 0 ? '#5c7c57' : '#4a505c';
-      ctx.strokeStyle = e.corroded > 0 ? '#97cf88' : '#9aa3b2';
-      ctx.lineWidth = 1.6;
-      ctx.beginPath();
-      ctx.arc(p.x, p.y - 6, e.radius, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.stroke();
-      ctx.fillStyle = '#d4dbe6';
-      ctx.beginPath();
-      ctx.arc(p.x - 4, p.y - 10, 3, 0, Math.PI * 2);
-      ctx.fill();
+      ctx.fillStyle = e.corroded > 0 ? '#74b86a' : '#6d7888';
+      ctx.beginPath(); ctx.arc(p.x, p.y - bob, rad, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = '#fffdf8';
+      ctx.beginPath(); ctx.arc(p.x - rad * 0.32, p.y - bob - rad * 0.3, rad * 0.22, 0, Math.PI * 2); ctx.fill();
     } else if (e.volatile) {
-      // Unstable Bubble (glowing ember amber)
-      ctx.fillStyle = 'rgba(230, 122, 46, 0.85)';
-      ctx.strokeStyle = '#ffd185';
-      ctx.lineWidth = 1.4;
-      ctx.beginPath();
-      ctx.arc(p.x, p.y - 8, e.radius, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.stroke();
+      ctx.fillStyle = '#f9825c';
+      ctx.beginPath(); ctx.arc(p.x, p.y - bob, rad + Math.sin(now * 0.014 + e.id) * 1.2, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = '#fffdf8';
+      ctx.beginPath(); ctx.arc(p.x - rad * 0.3, p.y - bob - rad * 0.32, rad * 0.24, 0, Math.PI * 2); ctx.fill();
     } else if (e.aura) {
-      // Mutant Mushroom (pale cap dark-fantasy fungal walker)
-      ctx.fillStyle = '#9c9282';
-      ctx.fillRect(p.x - 5, p.y - 10, 10, 12);
-      ctx.fillStyle = '#6c5a4e';
-      ctx.strokeStyle = '#d1c2ab';
-      ctx.lineWidth = 1.3;
-      ctx.beginPath();
-      ctx.arc(p.x, p.y - 12, 14, Math.PI, 0);
-      ctx.closePath();
-      ctx.fill();
-      ctx.stroke();
+      ctx.fillStyle = '#fffdf8';
+      ctx.fillRect(p.x - 5, p.y - bob, 10, 10); ctx.strokeRect(p.x - 5, p.y - bob, 10, 10);
+      ctx.fillStyle = '#c9795b';
+      ctx.beginPath(); ctx.arc(p.x, p.y - bob + 1, rad, Math.PI, 0); ctx.closePath(); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = '#fffdf8';
+      ctx.beginPath(); ctx.arc(p.x - 5, p.y - bob - 5, 2.3, 0, Math.PI * 2); ctx.arc(p.x + 5, p.y - bob - 4, 2, 0, Math.PI * 2); ctx.fill();
     } else {
-      // Acid Slime / Mini Slime
       ctx.fillStyle = e.color;
-      ctx.strokeStyle = '#b4e0a8';
-      ctx.lineWidth = 1.2;
-      ctx.beginPath();
-      ctx.arc(p.x, p.y - 4, e.radius, Math.PI, 0);
-      ctx.lineTo(p.x + e.radius, p.y + 1);
-      ctx.lineTo(p.x - e.radius, p.y + 1);
-      ctx.closePath();
-      ctx.fill();
-      ctx.stroke();
+      ctx.beginPath(); ctx.arc(p.x, p.y - bob + 4, rad, Math.PI, 0); ctx.closePath(); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = '#1b222c';
+      ctx.beginPath(); ctx.arc(p.x - 3.5, p.y - bob - 1, 1.6, 0, Math.PI * 2); ctx.arc(p.x + 3.5, p.y - bob - 1, 1.6, 0, Math.PI * 2); ctx.fill();
     }
 
-    // Status indicators (Marked / Infected)
     if (e.marked > 0) {
-      ctx.strokeStyle = '#f5dfa8';
-      ctx.lineWidth = 1.3;
+      ctx.strokeStyle = '#3b7dd8';
+      ctx.lineWidth = 2;
       ctx.beginPath();
-      ctx.moveTo(p.x, p.y - e.radius - 16);
-      ctx.lineTo(p.x + 5, p.y - e.radius - 10);
-      ctx.lineTo(p.x, p.y - e.radius - 4);
-      ctx.lineTo(p.x - 5, p.y - e.radius - 10);
-      ctx.closePath();
+      ctx.arc(p.x, p.y - bob, rad + 5, 0, Math.PI * 2);
       ctx.stroke();
     }
-    if (e.infected > 0) {
-      ctx.fillStyle = '#97db93';
-      ctx.beginPath();
-      ctx.arc(p.x + e.radius - 2, p.y - e.radius, 3, 0, Math.PI * 2);
-      ctx.fill();
-    }
 
-    // Health Bar (non-Boss)
     if (!e.isBoss && e.hp < e.maxHp) {
-      const bw = 26, bh = 3.5;
-      ctx.fillStyle = 'rgba(0,0,0,0.75)';
-      ctx.fillRect(p.x - bw / 2, p.y - e.radius - 12, bw, bh);
-      ctx.fillStyle = e.auraBuff ? '#86bf82' : '#c93838';
-      ctx.fillRect(p.x - bw / 2, p.y - e.radius - 12, bw * Math.max(0, e.hp / e.maxHp), bh);
+      const bw = 28, bh = 5;
+      ctx.fillStyle = '#fffdf8';
+      ctx.fillRect(p.x - bw / 2, p.y - rad - 13, bw, bh);
+      ctx.fillStyle = e.auraBuff ? '#4cb850' : '#e8624a';
+      ctx.fillRect(p.x - bw / 2, p.y - rad - 13, bw * Math.max(0, e.hp / e.maxHp), bh);
+      ctx.strokeStyle = '#1b222c';
+      ctx.lineWidth = 1.4;
+      ctx.strokeRect(p.x - bw / 2, p.y - rad - 13, bw, bh);
     }
   }
 
   function render(now) {
     ctx.clearRect(0, 0, W, H);
-
-    // Abyssal dark background gradient
-    const bg = ctx.createRadialGradient(W * 0.5, H * 0.45, 40, W * 0.5, H * 0.5, Math.max(W, H) * 0.72);
-    bg.addColorStop(0, '#171920');
-    bg.addColorStop(1, '#08090c');
-    ctx.fillStyle = bg;
+    ctx.fillStyle = '#e5f0ec';
     ctx.fillRect(0, 0, W, H);
 
     ctx.save();
@@ -1686,178 +1242,179 @@ html, body {
       ctx.translate((Math.random() - 0.5) * shakeMag * 2, (Math.random() - 0.5) * shakeMag * 2);
     }
 
-    // 1. Draw 2.5D Isometric Stone Slab Grid (back-to-front painter's order)
-    for (let gy = 0; gy < ROWS; gy++) {
-      for (let gx = 0; gx < COLS; gx++) {
-        const key = `${gx},${gy}`;
-        const isPath = pathSet.has(key);
-        const pad = PADS.find(p => p.x === gx && p.y === gy);
-        if (!isPath && !pad) {
-          // Subtle recessed outer flagstones only near path/pads for ruined causeway feel
-          const near = [...pathSet].some(k => {
-            const [px, py] = k.split(',').map(Number);
-            return Math.abs(px - gx) <= 1 && Math.abs(py - gy) <= 1;
-          });
-          if (!near) continue;
-          drawIsoBlock(gx, gy, 10, '#181a20', '#111318', '#0c0d11', 'rgba(255,255,255,0.03)');
-        } else if (isPath) {
-          const isStart = gx === 0 && gy === 2;
-          const isCore = gx === 11 && gy === 7;
-          const top = isStart ? '#2b1b19' : isCore ? '#3a291a' : '#262830';
-          drawIsoBlock(gx, gy, 14, top, '#1a1c22', '#131419', 'rgba(184,148,86,0.12)');
-        } else if (pad) {
-          const hovered = hoverPad === pad;
-          const top = hovered ? '#3c3323' : '#272420';
-          drawIsoBlock(gx, gy, 20, top, '#1c1a18', '#141210', hovered ? '#e2c282' : 'rgba(184,148,86,0.34)');
-          // Brass socket ring on empty pad
-          if (!towers.some(t => t.x === gx && t.y === gy)) {
-            const c = iso(gx, gy, 20);
-            ctx.strokeStyle = hovered ? '#e2c282' : 'rgba(184,148,86,0.38)';
-            ctx.lineWidth = 1.2;
-            ctx.beginPath();
-            ctx.ellipse(c.x, c.y, 12, 6.5, 0, 0, Math.PI * 2);
-            ctx.stroke();
-          }
-        }
-      }
+    // Subtle lab grid
+    ctx.strokeStyle = 'rgba(27, 34, 44, 0.08)';
+    ctx.lineWidth = 1;
+    for (let x = 0; x <= COLS; x++) {
+      ctx.beginPath(); ctx.moveTo(OX + x * CELL, OY); ctx.lineTo(OX + x * CELL, OY + ROWS * CELL); ctx.stroke();
+    }
+    for (let y = 0; y <= ROWS; y++) {
+      ctx.beginPath(); ctx.moveTo(OX, OY + y * CELL); ctx.lineTo(OX + COLS * CELL, OY + y * CELL); ctx.stroke();
     }
 
-    // 2. Warm Bonfire / Core Machine Glow at (11, 7)
-    const coreP = iso(11, 7, 26);
-    const flicker = Math.sin(now * 0.008) * 6;
-    const glow = ctx.createRadialGradient(coreP.x, coreP.y, 4, coreP.x, coreP.y, 92 + flicker);
-    glow.addColorStop(0, 'rgba(255, 160, 74, 0.36)');
-    glow.addColorStop(1, 'rgba(255, 120, 40, 0)');
-    ctx.fillStyle = glow;
+    // Path track
+    const pts = PATH.map(p => toScreen(p.x, p.y));
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
     ctx.beginPath();
-    ctx.arc(coreP.x, coreP.y, 92 + flicker, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Draw Core Machine Obelisk
-    ctx.fillStyle = '#2d241b';
-    ctx.strokeStyle = '#cfa968';
-    ctx.lineWidth = 1.8;
-    ctx.fillRect(coreP.x - 12, coreP.y - 26, 24, 32);
-    ctx.strokeRect(coreP.x - 12, coreP.y - 26, 24, 32);
-    ctx.fillStyle = '#ff9d47';
-    ctx.beginPath();
-    ctx.arc(coreP.x, coreP.y - 12, 7 + Math.sin(now * 0.01) * 1.4, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Draw Rift Portal at (0, 2)
-    const riftP = iso(0, 2, 22);
-    ctx.strokeStyle = 'rgba(154, 198, 152, 0.65)';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.ellipse(riftP.x, riftP.y - 10, 12, 20, 0, 0, Math.PI * 2);
+    pts.forEach((p, i) => i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y));
+    ctx.strokeStyle = '#1b222c';
+    ctx.lineWidth = CELL * 0.64;
+    ctx.stroke();
+    ctx.strokeStyle = '#fffdf8';
+    ctx.lineWidth = CELL * 0.54;
     ctx.stroke();
 
-    // 3. Depth-sorted Towers & Enemies
-    const renderables = [
-      ...towers.map(t => ({ kind: 'tower', depth: t.x + t.y, obj: t })),
-      ...enemies.filter(e => !e.dead).map(e => ({ kind: 'enemy', depth: e.x + e.y, obj: e }))
-    ].sort((a, b) => a.depth - b.depth);
+    // Moving dashed conveyor line
+    ctx.save();
+    ctx.setLineDash([8, 12]);
+    ctx.lineDashOffset = -(now * 0.03);
+    ctx.strokeStyle = '#b9d4cb';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+    ctx.restore();
 
-    for (const item of renderables) {
-      if (item.kind === 'tower') drawTower(item.obj, now);
-      else drawEnemy(item.obj, now);
+    // Start portal (Petri rift)
+    const startP = pts[0];
+    ctx.fillStyle = '#e1f5dc';
+    ctx.strokeStyle = '#1b222c';
+    ctx.lineWidth = 2.5;
+    ctx.beginPath(); ctx.arc(startP.x, startP.y, CELL * 0.34, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = '#4cb850';
+    ctx.beginPath(); ctx.arc(startP.x, startP.y, CELL * 0.16 + Math.sin(now * 0.006) * 2, 0, Math.PI * 2); ctx.fill();
+
+    // Core Machine at end
+    const endP = pts[pts.length - 1];
+    ctx.fillStyle = '#fff0c2';
+    ctx.strokeStyle = '#1b222c';
+    ctx.lineWidth = 2.6;
+    ctx.beginPath(); ctx.roundRect(endP.x - CELL * 0.36, endP.y - CELL * 0.36, CELL * 0.72, CELL * 0.72, 10); ctx.fill(); ctx.stroke();
+    ctx.save();
+    ctx.translate(endP.x, endP.y);
+    ctx.rotate(now * 0.002);
+    ctx.strokeStyle = '#e8624a';
+    ctx.lineWidth = 2.6;
+    for (let k = 0; k < 4; k++) { ctx.rotate(Math.PI / 2); ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(0, -CELL * 0.2); ctx.stroke(); }
+    ctx.restore();
+    ctx.fillStyle = '#f4b731';
+    ctx.beginPath(); ctx.arc(endP.x, endP.y, 6, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+
+    // Tower pads
+    for (const pad of PADS) {
+      const p = toScreen(pad.x, pad.y);
+      const occupied = towers.some(t => t.x === pad.x && t.y === pad.y);
+      if (occupied) continue;
+      const isHover = hoverPad === pad;
+      if (isHover && !selectedTower) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, TOWERS[selectedTool].range * CELL, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(244, 183, 49, 0.14)';
+        ctx.fill();
+        ctx.strokeStyle = '#d89a2b';
+        ctx.lineWidth = 1.8;
+        ctx.setLineDash([5, 4]);
+        ctx.stroke();
+        ctx.restore();
+      }
+      ctx.fillStyle = isHover ? '#fff0c2' : '#fffdf8';
+      ctx.strokeStyle = '#1b222c';
+      ctx.lineWidth = 2;
+      ctx.setLineDash(isHover ? [] : [4, 4]);
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, CELL * 0.31, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+      ctx.setLineDash([]);
+      // Plus sign
+      ctx.strokeStyle = isHover ? '#1b222c' : '#9aa4b0';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(p.x - 5, p.y); ctx.lineTo(p.x + 5, p.y);
+      ctx.moveTo(p.x, p.y - 5); ctx.lineTo(p.x, p.y + 5);
+      ctx.stroke();
     }
 
-    // 4. Projectiles & Lightning Beams
+    for (const t of towers) drawTower(t, now);
+    for (const e of enemies) if (!e.dead) drawEnemy(e, now);
+
+    // Projectiles
     for (const p of projectiles) {
       if (p.instant) {
-        const a = iso(p.x, p.y, 38);
-        const b = iso(p.tx, p.ty, 18);
+        const a = toScreen(p.x, p.y), b = toScreen(p.tx, p.ty);
         ctx.save();
         ctx.globalAlpha = Math.max(0, p.life / p.maxLife);
         ctx.strokeStyle = p.color;
-        ctx.lineWidth = 2.2;
+        ctx.lineWidth = 3;
         ctx.beginPath();
-        ctx.moveTo(a.x, a.y);
-        const mx = (a.x + b.x) * 0.5 + (Math.random() - 0.5) * 14;
-        const my = (a.y + b.y) * 0.5 + (Math.random() - 0.5) * 14;
-        ctx.lineTo(mx, my);
+        ctx.moveTo(a.x, a.y - 10);
+        ctx.lineTo((a.x + b.x) * 0.5 + (Math.random() - 0.5) * 10, (a.y + b.y) * 0.5 + (Math.random() - 0.5) * 10);
         ctx.lineTo(b.x, b.y);
         ctx.stroke();
         ctx.restore();
       } else {
-        const pos = iso(p.x, p.y, 26);
+        const pos = toScreen(p.x, p.y);
         ctx.fillStyle = p.color;
-        ctx.beginPath();
-        ctx.arc(pos.x, pos.y, 4.5, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.strokeStyle = '#1b222c';
+        ctx.lineWidth = 1.8;
+        ctx.beginPath(); ctx.arc(pos.x, pos.y, 5, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
       }
     }
 
-    // 5. Particles & Reaction Float Texts
+    // Particles
     for (const p of particles) {
       ctx.save();
       ctx.globalAlpha = Math.max(0, p.life / p.maxLife);
       ctx.fillStyle = p.color;
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fill();
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fill();
       ctx.restore();
     }
 
-    ctx.font = '700 13px "Songti SC", "PingFang SC", serif';
+    // Floating combat labels
+    ctx.font = '800 13px "SF Pro Rounded", "PingFang SC", sans-serif';
     ctx.textAlign = 'center';
     for (const f of floatTexts) {
-      const pos = iso(f.gx, f.gy, f.gz);
       ctx.save();
       ctx.globalAlpha = Math.max(0, f.life / f.maxLife);
-      ctx.fillStyle = '#000';
-      ctx.fillText(f.text, pos.x + 1, pos.y + 1);
+      ctx.lineWidth = 3.5;
+      ctx.strokeStyle = '#fffdf8';
+      ctx.strokeText(f.text, f.x, f.y);
       ctx.fillStyle = f.color;
-      ctx.fillText(f.text, pos.x, pos.y);
+      ctx.fillText(f.text, f.x, f.y);
       ctx.restore();
     }
 
     ctx.restore();
-
-    // 6. Drifting Souls Ash & Embers
-    for (const m of ashMotes) {
-      ctx.fillStyle = m.ember ? 'rgba(235, 134, 62, 0.55)' : 'rgba(205, 198, 185, 0.24)';
-      ctx.beginPath();
-      ctx.arc(m.x * W, m.y * H, m.r, 0, Math.PI * 2);
-      ctx.fill();
-    }
   }
 
-  // ---------- Input Handlers ----------
-  function findPadAt(clientX, clientY) {
-    let best = null, bestDist = 36;
+  // ---------- Input ----------
+  function findPad(clientX, clientY) {
+    const rect = canvas.getBoundingClientRect();
+    const mx = clientX - rect.left, my = clientY - rect.top;
+    let best = null, bestD = CELL * 0.48;
     for (const pad of PADS) {
-      const p = iso(pad.x, pad.y, 20);
-      const d = Math.hypot(clientX - p.x, clientY - p.y);
-      if (d < bestDist) { bestDist = d; best = pad; }
+      const p = toScreen(pad.x, pad.y);
+      const d = Math.hypot(mx - p.x, my - p.y);
+      if (d < bestD) { bestD = d; best = pad; }
     }
     return best;
   }
 
   canvas.addEventListener('mousemove', e => {
-    hoverPad = findPadAt(e.clientX, e.clientY);
-    canvas.style.cursor = hoverPad ? 'pointer' : 'crosshair';
+    hoverPad = findPad(e.clientX, e.clientY);
+    canvas.style.cursor = hoverPad ? 'pointer' : 'default';
   });
 
   canvas.addEventListener('click', e => {
     if (state !== 'playing') return;
-    const pad = findPadAt(e.clientX, e.clientY);
-    if (!pad) {
-      selectedTower = null;
-      updateHud();
-      return;
-    }
+    const pad = findPad(e.clientX, e.clientY);
+    if (!pad) { selectedTower = null; updateHud(); return; }
     const existing = towers.find(t => t.x === pad.x && t.y === pad.y);
-    if (existing) {
-      selectedTower = existing;
-      updateHud();
-    } else {
-      placeTower(pad);
-    }
+    if (existing) { selectedTower = existing; updateHud(); }
+    else placeTower(pad);
   });
 
-  document.querySelectorAll('.tower-slot').forEach(btn => {
+  document.querySelectorAll('.tower-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       selectedTool = btn.dataset.tower;
       selectedTower = null;
@@ -1873,13 +1430,14 @@ html, body {
     if (e.key === ' ') { e.preventDefault(); startNextWave(); }
   });
 
-  byId('upgradeBtn').onclick = upgradeSelectedTower;
-  byId('sellBtn').onclick = sellSelectedTower;
   byId('nextWaveBtn').onclick = startNextWave;
+  byId('upgradeBtn').onclick = upgradeSelected;
+  byId('sellBtn').onclick = sellSelected;
+  byId('restartBtn').onclick = resetGame;
 
   byId('speedBtn').onclick = () => {
     gameSpeed = gameSpeed === 1 ? 2 : 1;
-    byId('speedBtn').textContent = `${gameSpeed}× 节奏`;
+    byId('speedBtn').textContent = `${gameSpeed}×`;
     byId('speedBtn').classList.toggle('active', gameSpeed === 2);
   };
 
@@ -1888,39 +1446,6 @@ html, body {
     byId('muteBtn').textContent = muted ? '音效 关' : '音效 开';
   };
 
-  function resetGame() {
-    souls = 220;
-    coreHp = 20;
-    waveIdx = 0;
-    waveActive = false;
-    spawnQueue = [];
-    towers.length = 0;
-    enemies.length = 0;
-    projectiles.length = 0;
-    particles.length = 0;
-    floatTexts.length = 0;
-    selectedTower = null;
-    state = 'playing';
-    byId('overlay').hidden = true;
-    byId('banner').classList.remove('show');
-    updateHud();
-    showBanner('科 学 纪 元', 'IGNITE THE FIRST WAVE');
-  }
-
-  function openEndModal(won) {
-    byId('modalKicker').textContent = won ? 'VICTORY · 核心守护成功' : 'DEFEAT · 观测站沦陷';
-    byId('modalTitle').textContent = won ? '火已续燃 · 科学纪元获胜' : '薪火熄灭';
-    byId('modalDesc').textContent = won
-      ? `你成功击溃四阶段「失控反应釜」，守住了核心机器（剩余耐久 ${coreHp} / 20）。`
-      : `核心机器在第 ${waveIdx} 波被失控实验品摧毁。试试用电磁塔甩击铁球、化学塔引爆气泡与算法塔锁定变异蘑菇。`;
-    byId('modalHints').hidden = won;
-    byId('startGameBtn').textContent = '再度挑战';
-    byId('overlay').hidden = false;
-  }
-
-  byId('startGameBtn').onclick = resetGame;
-
-  // ---------- Frame Loop ----------
   let last = performance.now();
   function loop(now) {
     const dt = Math.min(0.05, (now - last) / 1000);
@@ -1929,6 +1454,7 @@ html, body {
     render(now);
     requestAnimationFrame(loop);
   }
+
   updateHud();
   requestAnimationFrame(loop);
 })();
