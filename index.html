@@ -48,6 +48,11 @@
 .elements td:first-child{color:#c5e5cf}.elements td:last-child svg{border-color:#d9b97c66;background:#c798500d}
 @media(max-width:520px){.elements td{padding:.28rem .45rem}.elements .emblem{gap:.35rem}.emblem svg{width:2.15rem;height:2.15rem}}
 .elements caption{text-align:left;color:#fff0cc;font-family:serif;letter-spacing:.13em;padding:.3rem .8rem;background:#192b29ed}
+
+.wuxing .chapter-art::before{content:"";position:absolute;inset:-6%;background:linear-gradient(90deg,#101e25ed,#162a3250 51%,transparent 82%),url(yin-yang.png) center/cover;animation:mountain-pan 9s ease-in-out infinite alternate}
+@keyframes mountain-pan{from{transform:translate(-2%,1%) scale(1)}to{transform:translate(2%,-1%) scale(1.085)}}
+.wuxing .chapter-art i{top:47%;height:24%;width:85%;filter:blur(5px);background:radial-gradient(ellipse at 25% 58%,#edf2e5af,transparent 42%),radial-gradient(ellipse at 62% 46%,#fff3d5ab,transparent 49%);animation-duration:7s}
+.wuxing .chapter-art i:nth-child(2){top:23%;height:17%}.wuxing .chapter-art i:nth-child(3){top:68%;height:22%}
 </style>
 <main><header><strong>✧ 星界档案馆</strong><button id="gear" aria-label="打开设置">⚙</button></header>
 <section id="cover"><canvas id="starlight" aria-hidden="true"></canvas><div class="titles"><small>MULTIVERSE TOWER DEFENSE</small><h1>星界守望</h1><p>多元宇宙塔防</p></div><button class="start" id="start">开始游戏</button></section>
