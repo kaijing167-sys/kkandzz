@@ -1,6 +1,6 @@
 # 星界守望
 
-**[▶ 在线试玩《星界守望》](https://raw.githack.com/kaijing167-sys/kkandzz/main/index.html)**
+**[▶ 在线试玩《星界守望》](https://kaijing167-sys.github.io/kkandzz/)**
 
 一本可以翻动的多元宇宙塔防图鉴。点击「开始游戏」展开星图，从目录选择一个平行宇宙，或使用书页底部的按钮逐页探索。当前试玩版开放封面、图鉴和设置；「守护」入口会显示关卡筹备提示。
 
@@ -13,4 +13,4 @@
 
 ## 本地试玩
 
-下载并解压仓库，保留三张 PNG 封面与 `index.html` 在同一目录，使用浏览器打开 `index.html` 即可。在线试玩由 raw.githack.com 提供，读取本仓库的 `main` 分支。
+下载并解压仓库，保留三张 PNG 封面与 `index.html` 在同一目录，使用浏览器打开 `index.html` 即可。在线试玩由 GitHub Pages 托管。
