@@ -1646,6 +1646,7 @@ function setInspector(group, el) {
 document.querySelectorAll('[data-guard]').forEach(btn => {
   btn.addEventListener('click', () => {
     const world = btn.dataset.guard;
+    if (world === '科学纪元') { location.href = 'science-era.html'; return; }
     byId('guardTitle').textContent = `守护 · ${world}`;
     byId('guardText').textContent = `「${world}」的实机塔防关卡正在筹备中。接下来可以直接基于右侧图鉴里的塔、怪物与联动规则开做可玩原型。`;
     byId('guardDialog').showModal();
