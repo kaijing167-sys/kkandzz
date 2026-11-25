@@ -1,238 +1,595 @@
 <!doctype html>
-<html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>星界守望 · 多元宇宙塔防</title>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>星界守望 · 多元宇宙塔防</title>
 <style>
-*{box-sizing:border-box}body{margin:0;background:#0a1b20;color:#fff1ce;font:16px/1.6 "DM Sans","Microsoft YaHei",sans-serif}button{font:inherit;cursor:pointer}button:focus-visible,input:focus-visible{outline:3px solid #63d6ed;outline-offset:4px}main{position:relative;isolation:isolate;min-height:100svh;display:grid;align-items:center;padding:6rem clamp(1.5rem,8vw,9rem);background:radial-gradient(ellipse at 50% 42%,#090b20a8,transparent 62%),url(multiverse.png) center/cover,#13353b;perspective:1400px}header,footer{position:absolute;left:5%;right:5%;display:flex;justify-content:space-between;align-items:center;z-index:3}header{top:1.2rem;border-bottom:1px solid #d8bf8459;padding-bottom:.7rem;letter-spacing:.18em}header button,.navbtn{background:#10282d;color:#f7e7bd;border:1px solid #9d997e;border-radius:4px;padding:.45rem 1rem}header button{font-size:1.5rem;line-height:1.3}small{letter-spacing:.21em;color:#f2ce87}h1,h2{font-family:"STSong","SimSun",serif;line-height:1.12}h1{font-size:clamp(3.6rem,8vw,8rem);margin:.2em 0;letter-spacing:.05em}h2{font-size:clamp(2.6rem,6vw,5rem);margin:.2em 0}.start{background:#f6d38d;color:#202c2b;padding:.85rem 2.8rem;border:1px solid #ffe6ac;border-radius:3px;font-weight:bold;margin-top:1rem}footer{bottom:1rem;font:13px monospace;letter-spacing:.15em}.book{position:relative;padding:clamp(1.5rem,5vw,5rem);border:3px double #998250;box-shadow:6px 6px #aaa08a,10px 10px #37372e,0 15px 60px #0008;background:linear-gradient(90deg,#a99570,#e7dab8 3%,#f3e8c9 47%,#d6c6a1 50%,#eddfbc 52%,#ede2c6);color:#253b38;min-height:55svh;display:grid;align-content:center}.book small{color:#665437}.entry{border:0;border-block:1px solid #96886b;background:transparent;color:inherit;text-align:left;padding:1rem 0;font-size:1.2rem}.illustrated{background:linear-gradient(90deg,#082129eb,transparent),url(science-era.png) center/cover;color:#fff1ce}.illustrated small{color:#ead29d}.navbtn:disabled{opacity:.4;cursor:default}dialog{background:#132e32;color:#f4e4c3;border:1px solid #bc9d67;width:min(90vw,360px);padding:1.7rem}dialog::backdrop{background:#07171dcc}dialog label{display:block;margin:1rem 0}input{width:100%;accent-color:#efc77c}output{float:right}dialog h2{font-size:2rem}[hidden]{display:none!important}@media(prefers-reduced-motion:reduce){*{animation:none!important}}@media(max-width:520px){main{background-position:63% center}.book{min-height:58svh}footer{bottom:1.5rem}}
-#subjects{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.6rem;max-width:33rem;margin:0}#subjects div{background:#09252de6;padding:.5rem .8rem;border-left:2px solid #d7bc7e}dt{color:#f2d28e}dd{margin:0;font-size:.87rem}.illustrated p{max-width:31rem;text-shadow:0 1px 4px #000}
+:root {
+  --bg: #0b1014;
+  --text: #efe7d6;
+  --text-dim: #a9a295;
+  --text-mute: #767168;
+  --accent: #d4b072;
+  --line: rgba(239, 231, 214, 0.16);
+  --line-strong: rgba(212, 176, 114, 0.45);
+  --panel: rgba(11, 16, 20, 0.78);
+  --serif: "Songti SC", "STSong", "Noto Serif SC", "SimSun", Georgia, serif;
+  --sans: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
+}
 
-#cover{text-align:center}.titles{position:absolute;bottom:calc(50% + 2.7rem);left:0;right:0;text-shadow:0 2px 18px #080919}.titles p{margin:.4rem}#start{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);margin:0;white-space:nowrap}
-.book{border-radius:2% 4% 3% 2% / 3% 2% 3% 2%;box-shadow:0 3px #d6c8aa,0 5px #786750,0 7px #ddcfac,0 10px #463625,0 13px #302137,0 24px 38px #100c22aa}
-#turnsheet{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
-@media(max-height:500px){.titles h1{font-size:2.1rem}.titles small{display:none}.titles{bottom:calc(50% + 1.7rem)}}
-.book.old-page{position:absolute;inset:0;min-height:0;box-shadow:none;pointer-events:none} .binding{place-content:center;background:linear-gradient(105deg,#1b1830,#36354e,#221b30);color:#efdcab;font:clamp(2rem,5vw,4rem) serif;border:5px double #9c8358}.old-page dl{display:grid;grid-template-columns:1fr 1fr;max-width:33rem;gap:.6rem;margin:0}.old-page dl div{background:#09252de6;padding:.5rem .8rem;border-left:2px solid #d7bc7e}
-.wuxing{background:linear-gradient(90deg,#101e25ed 0%,#162a3270 50%,transparent 82%),url(yin-yang.png) center/cover;color:#fff0d3}.wuxing small{color:#f0c782}.wuxing p{max-width:27rem;text-shadow:0 1px 5px #122}.entry+.entry{border-top:0}
+*, *::before, *::after { box-sizing: border-box; }
 
-.book{padding-bottom:5.8rem}
-.book-nav{position:absolute;bottom:1rem;left:clamp(.8rem,3vw,2.5rem);right:clamp(.8rem,3vw,2.5rem);display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:.4rem}
-.book-nav button:first-child{justify-self:start}.book-nav button:last-child{justify-self:end}.book-nav span{font:14px monospace}
-.guard-row{display:flex;justify-content:flex-end;margin-top:1.25rem;align-self:end}.book:has(.guard-row:not([hidden])){align-content:stretch;grid-template-rows:auto auto auto auto 1fr}.guard{border:1px solid #f5ce80;border-radius:4px;background:#f2cf91;color:#242e30;font-weight:700;padding:.65rem 1.3rem}
-@media(max-width:520px){.book-nav .navbtn{padding:.45rem .65rem}}
-#starlight{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}.titles,#start{z-index:1}
+html, body {
+  margin: 0;
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 14.5px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
 
-.sigil{width:1.65rem;height:1.65rem;flex:none;vertical-align:middle}
-.illustrated dt{display:flex;align-items:center;gap:.55rem}.illustrated dd{padding-left:2.2rem}
-.elements{width:min(100%,26rem);border-spacing:0;color:#fff1dc;background:#101f29e8;border:1px solid #a68c61;border-radius:4px;overflow:hidden}
-.elements th,.elements td{width:50%;text-align:left;padding:.28rem .85rem}.elements th{font-family:serif;letter-spacing:.16em;border-bottom:1px solid #927f62}
-.elements td{border-bottom:1px solid #ffffff19}.elements tr:last-child td{border-bottom:0}
-.elements :is(td,th):first-child{color:#c1e6ef;border-right:1px solid #96836566}.elements :is(td,th):last-child{color:#ffda92}
-.elements .sigil{margin-right:.65rem;width:1.4rem;height:1.4rem}
-@media(max-width:520px){.illustrated dt{flex-wrap:wrap;gap:.25rem}.illustrated dd{padding-left:0}}
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+[hidden] { display: none !important; }
 
-/* Keep effects on the illustration, beneath the controls and text. */
-.book{isolation:isolate}
-.chapter-art{display:none;position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:-1;border-radius:inherit}
-.illustrated .chapter-art,.wuxing .chapter-art{display:block}
-.chapter-art i{position:absolute;display:block}
-.illustrated .chapter-art i{left:69%;top:22%;width:26%;height:13%;border:2px solid #99f5ff;box-shadow:0 0 14px #4fd8e7,inset 0 0 10px #7be3e9;border-radius:50%;animation:coil-pulse 3.8s ease-out infinite}
-.illustrated .chapter-art i:nth-child(2){animation-delay:-1.25s}.illustrated .chapter-art i:nth-child(3){animation-delay:-2.5s}
-@keyframes coil-pulse{0%{opacity:0;transform:scale(.18)}18%{opacity:.83}100%{opacity:0;transform:scale(1.45) translateY(-12%)}}
-.wuxing .chapter-art i{width:84%;height:42%;left:25%;top:52%;background:radial-gradient(ellipse at center,#efe7d6a6,transparent 65%);filter:blur(9px);animation:valley-mist 12s ease-in-out infinite alternate}
-.wuxing .chapter-art i:nth-child(2){left:46%;top:20%;height:32%;animation-delay:-5s}.wuxing .chapter-art i:nth-child(3){left:-20%;top:64%;animation-duration:16s;animation-delay:-9s}
-@keyframes valley-mist{from{opacity:.26;transform:translate(-12%,9%) rotate(-9deg)}to{opacity:.85;transform:translate(13%,-10%) rotate(-16deg)}}
-@media(prefers-reduced-motion:reduce){.chapter-art{display:none!important}}
+/* ---------- Full-Bleed Stage ---------- */
+.stage {
+  position: relative;
+  min-height: 100svh;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  overflow: hidden;
+}
 
-.elements{background:linear-gradient(100deg,#142f2df2,#232823f5 48%,#302a23f5);border:3px double #a5956d}
-.elements th{font-family:"STSong","SimSun",serif;font-size:1.1rem}
-.elements .emblem{display:flex;gap:.65rem;align-items:center;font:600 1.05rem/1.2 "STSong","SimSun",serif}
-.emblem svg{flex:none;width:2.65rem;height:2.65rem;padding:2px;border:1px solid #b4cbbc55;border-radius:50%;background:#99c8b50d}
-.elements .emblem small{display:block;font:normal .77rem/1.45 "STSong","SimSun",serif;color:inherit;letter-spacing:.12em;opacity:.83}
-.elements td:first-child{color:#c5e5cf}.elements td:last-child svg{border-color:#d9b97c66;background:#c798500d}
-@media(max-width:520px){.elements td{padding:.28rem .45rem}.elements .emblem{gap:.35rem}.emblem svg{width:2.15rem;height:2.15rem}}
-.elements caption{text-align:left;color:#fff0cc;font-family:serif;letter-spacing:.13em;padding:.3rem .8rem;background:#192b29ed}
+.bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+}
 
-.wuxing .chapter-art::before{content:"";position:absolute;inset:-6%;background:linear-gradient(90deg,#101e25ed,#162a3250 51%,transparent 82%),url(yin-yang.png) center/cover;animation:mountain-pan 9s ease-in-out infinite alternate}
-@keyframes mountain-pan{from{transform:translate(-2%,1%) scale(1)}to{transform:translate(2%,-1%) scale(1.085)}}
-.wuxing .chapter-art i{top:47%;height:24%;width:85%;filter:blur(5px);background:radial-gradient(ellipse at 25% 58%,#edf2e5af,transparent 42%),radial-gradient(ellipse at 62% 46%,#fff3d5ab,transparent 49%);animation-duration:7s}
-.wuxing .chapter-art i:nth-child(2){top:23%;height:17%}.wuxing .chapter-art i:nth-child(3){top:68%;height:22%}
+.bg.active { opacity: 1; }
+.bg-cover { background-image: url("multiverse.png"); background-position: center 55%; }
+.bg-science { background-image: url("science-era.png"); background-position: 65% center; }
+.bg-wuxing { background-image: url("yin-yang.png"); background-position: 60% center; }
+
+.scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  transition: background 0.3s ease;
+}
+
+.stage[data-view="cover"] .scrim {
+  background: radial-gradient(ellipse 65% 55% at 50% 38%, rgba(9, 13, 18, 0.45), rgba(9, 13, 18, 0.72));
+}
+
+.stage[data-view="index"] .scrim {
+  background: rgba(9, 13, 18, 0.82);
+}
+
+.stage[data-view="science"] .scrim,
+.stage[data-view="wuxing"] .scrim {
+  background: linear-gradient(90deg, rgba(9, 14, 18, 0.94) 0%, rgba(9, 14, 18, 0.82) 38%, rgba(9, 14, 18, 0.16) 66%, transparent 86%);
+}
+
+/* ---------- Top & Bottom Bars ---------- */
+.topbar, .bottombar {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px clamp(20px, 5vw, 56px);
+}
+
+.brand {
+  font-family: var(--serif);
+  font-size: 15px;
+  letter-spacing: 0.24em;
+  color: var(--text);
+}
+
+.text-btn {
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  color: var(--text-dim);
+  padding: 6px 12px;
+  border: 1px solid var(--line);
+  background: rgba(11, 16, 20, 0.55);
+  transition: color 0.18s, border-color 0.18s;
+}
+
+.text-btn:hover { color: var(--text); border-color: var(--line-strong); }
+
+/* ---------- Main Host ---------- */
+.host {
+  position: relative;
+  z-index: 4;
+  display: grid;
+  align-items: center;
+  padding: 0 clamp(20px, 5vw, 56px);
+}
+
+.view { animation: fadeIn 0.22s ease both; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ---------- Cover ---------- */
+.cover {
+  text-align: center;
+  padding-bottom: clamp(48px, 12vh, 110px);
+}
+
+.cover h1 {
+  margin: 0;
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: clamp(3rem, 7vw, 5.4rem);
+  letter-spacing: 0.22em;
+  padding-left: 0.22em;
+  line-height: 1.1;
+}
+
+.cover p {
+  margin: 12px 0 32px;
+  font-size: 13px;
+  letter-spacing: 0.34em;
+  padding-left: 0.34em;
+  color: var(--text-dim);
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 11px 32px;
+  background: var(--accent);
+  color: #13181c;
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: 14.5px;
+  letter-spacing: 0.2em;
+  border: 1px solid #ebd19c;
+  transition: filter 0.18s;
+}
+
+.btn-primary:hover { filter: brightness(1.08); }
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 20px;
+  border: 1px solid var(--line);
+  color: var(--text-dim);
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  transition: color 0.18s, border-color 0.18s;
+}
+
+.btn-secondary:hover { color: var(--text); border-color: var(--line-strong); }
+
+/* ---------- Index (Clean Ordered List) ---------- */
+.index-wrap {
+  width: min(560px, 100%);
+  margin: 0 auto;
+}
+
+.kicker {
+  display: block;
+  font-size: 11.5px;
+  letter-spacing: 0.24em;
+  color: var(--accent);
+  margin-bottom: 6px;
+}
+
+.index-wrap h2, .chapter h2 {
+  margin: 0 0 22px;
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: clamp(1.9rem, 3.6vw, 2.6rem);
+  letter-spacing: 0.14em;
+  line-height: 1.15;
+}
+
+.chapter-list {
+  border-top: 1px solid var(--line);
+}
+
+.chapter-row {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 42px 1fr auto;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 4px;
+  text-align: left;
+  border-bottom: 1px solid var(--line);
+  transition: padding-left 0.18s, border-color 0.18s;
+}
+
+.chapter-row:hover:not(:disabled) {
+  padding-left: 10px;
+  border-bottom-color: var(--line-strong);
+}
+
+.chapter-row:disabled { opacity: 0.42; cursor: default; }
+
+.row-num {
+  font-family: var(--serif);
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+}
+
+.row-title {
+  display: block;
+  font-family: var(--serif);
+  font-size: 19px;
+  letter-spacing: 0.1em;
+}
+
+.row-sub {
+  display: block;
+  font-size: 12.5px;
+  color: var(--text-dim);
+  margin-top: 2px;
+}
+
+.row-status {
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  color: var(--text-dim);
+}
+
+.row-status.playable { color: var(--accent); }
+
+/* ---------- Chapter Column ---------- */
+.chapter {
+  width: min(440px, 100%);
+}
+
+.chapter-desc {
+  margin: -10px 0 22px;
+  font-size: 13.5px;
+  color: var(--text-dim);
+}
+
+/* Science 2x2 Clean Grid */
+.science-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-top: 1px solid var(--line);
+  border-left: 1px solid var(--line);
+  margin-bottom: 24px;
+}
+
+.science-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 14px;
+  background: rgba(11, 16, 20, 0.56);
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.science-cell svg {
+  width: 24px;
+  height: 24px;
+  flex: none;
+  color: var(--accent);
+}
+
+.cell-name { display: block; font-family: var(--serif); font-size: 15px; letter-spacing: 0.06em; }
+.cell-sub { display: block; font-size: 12px; color: var(--text-dim); }
+
+/* Wuxing 5-Row Clean Ledger */
+.wuxing-list {
+  border-top: 1px solid var(--line);
+  margin-bottom: 22px;
+}
+
+.wx-row {
+  display: grid;
+  grid-template-columns: 32px 1fr 1fr;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.wx-key {
+  font-family: var(--serif);
+  font-size: 14px;
+  color: var(--text-mute);
+}
+
+.wx-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.wx-item svg {
+  width: 28px;
+  height: 28px;
+  flex: none;
+  opacity: 0.9;
+}
+
+.wx-item.yin { color: #b9d7c8; }
+.wx-item.yang { color: #e8cb92; }
+
+.wx-name { display: block; font-family: var(--serif); font-size: 14px; line-height: 1.2; }
+.wx-sub { display: block; font-size: 11px; color: var(--text-dim); }
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* ---------- Bottom Nav ---------- */
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.nav-link {
+  font-family: var(--serif);
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  color: var(--text-mute);
+  padding-bottom: 3px;
+  border-bottom: 1px solid transparent;
+  transition: color 0.18s, border-color 0.18s;
+}
+
+.nav-link:hover { color: var(--text-dim); }
+.nav-link[aria-current="page"] { color: var(--text); border-bottom-color: var(--accent); }
+
+.nav-hint {
+  font-size: 11.5px;
+  letter-spacing: 0.14em;
+  color: var(--text-mute);
+}
+
+/* ---------- Minimal Dialog ---------- */
+dialog {
+  padding: 24px 26px;
+  width: min(90vw, 340px);
+  background: #10161b;
+  color: var(--text);
+  border: 1px solid var(--line-strong);
+}
+
+dialog::backdrop { background: rgba(6, 9, 12, 0.72); }
+dialog h3 { margin: 0 0 18px; font-family: var(--serif); font-weight: 500; font-size: 18px; letter-spacing: 0.16em; }
+dialog label { display: block; margin-bottom: 16px; font-size: 13px; color: var(--text-dim); }
+dialog output { float: right; color: var(--accent); }
+dialog input[type="range"] { width: 100%; margin-top: 8px; accent-color: var(--accent); }
+.dialog-foot { display: flex; justify-content: flex-end; margin-top: 8px; }
+
+@media (max-width: 760px) {
+  .stage[data-view="science"] .scrim,
+  .stage[data-view="wuxing"] .scrim {
+    background: linear-gradient(180deg, rgba(9, 14, 18, 0.55) 0%, rgba(9, 14, 18, 0.92) 38%, rgba(9, 14, 18, 0.96) 100%);
+  }
+  .nav-hint { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}
 </style>
-<main><header><strong>✧ 星界档案馆</strong><button id="gear" aria-label="打开设置">⚙</button></header>
-<section id="cover"><canvas id="starlight" aria-hidden="true"></canvas><div class="titles"><small>MULTIVERSE TOWER DEFENSE</small><h1>星界守望</h1><p>多元宇宙塔防</p></div><button class="start" id="start">开始游戏</button></section>
-<section id="book" class="book" aria-live="polite" hidden><div class="chapter-art" aria-hidden="true"><i></i><i></i><i></i></div><small id="eyebrow"></small><h2 id="heading" tabindex="-1"></h2><p id="description"></p><dl id="subjects" hidden><div><dt><svg class="sigil" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><ellipse cx="16" cy="16" rx="14" ry="5" transform="rotate(-38 16 16)"/><ellipse cx="16" cy="16" rx="14" ry="5" transform="rotate(38 16 16)"/><circle cx="16" cy="16" r="2.3" fill="currentColor"/><circle cx="6" cy="7" r="2" fill="currentColor"/></svg><span>物理</span></dt><dd>电磁线圈塔</dd></div><div><dt><svg class="sigil" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M11 3h10m-8 0v10L5 26q-1 3 3 3h16q4 0 2-4l-8-12V3M9 21q4-3 8 0t6 0"/><circle cx="14" cy="24" r="1"/></svg><span>化学</span></dt><dd>晶格反应塔</dd></div><div><dt><svg class="sigil" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M9 3c0 12 14 14 14 26M23 3c0 12-14 14-14 26M10 6h12M12 10h8M12 22h8M10 26h12"/></svg><span>生物</span></dt><dd>共生树塔</dd></div><div><dt><svg class="sigil" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><rect x="7" y="7" width="18" height="18" rx="3"/><rect x="12" y="12" width="8" height="8"/><path d="M12 3v4m8-4v4M12 25v4m8-4v4M3 12h4m-4 8h4m18-8h4m-4 8h4"/></svg><span>计算机科学与技术</span></dt><dd>算法阵列塔</dd></div></dl><table class="elements" id="elements" aria-label="十天干与阴阳五行对照" hidden><caption>十天干 · 阴阳五行</caption><thead><tr><th scope="col">☾ 阴</th><th scope="col">☀ 阳</th></tr></thead><tbody><tr><td><span class="emblem"><svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 34 27 16 12 34Z M26 17C17 17 18 9 23 10Q25 10 26 14C23 4 32 4 31 11Q30 14 28 15C36 9 39 17 32 19Q29 20 26 17Z M32 19v7m0 1v2"/></svg><span>辛金<small>阴金 · 银簪</small></span></span></td><td><span class="emblem"><svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 11q0-7 5-7t5 7 M13 14q9-5 18 0l2 14 3 4q-14-4-28 0l3-5Z M13 18q9-4 18 0 M12 25q10-4 20 0 M20 31q2 7 5 0"/></svg><span>庚金<small>阳金 · 铜钟</small></span></span></td></tr>
-<tr><td><span class="emblem"><svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 12q13 4 27-6 M17 13q3 11-6 21 M23 12q6 9 0 19 M29 10q7 5 5 13 M18 18q-6 2-6 8 5-3 6-8Z M25 17q-4 3-3 8 4-3 3-8Z"/></svg><span>乙木<small>阴木 · 垂柳</small></span></span></td><td><span class="emblem"><svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 37 22 8m-6 19 5 1m-4-11 6 1 M20 21q5-8 14-9-4 7-14 9Z M20 24Q10 21 8 15q9 1 12 9Z M23 12q4-6 10-7-2 5-10 7Z"/></svg><span>甲木<small>阳木 · 劲竹</small></span></span></td></tr>
-<tr><td><span class="emblem"><svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 6q-5 7-4 10a5 5 0 0 0 9-2q-1-3-5-8Z M15 23c-9 3 8 7 14 2 M9 25c-12 7 20 13 28 3 M14 34q9 3 17 0"/></svg><span>癸水<small>阴水 · 涟漪</small></span></span></td><td><span class="emblem"><svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 32q9 1 13-12 4-13 16-10-9 0-8 8 1 7 10 4-5 8-14 4 M5 36q9 1 15-8 6 6 17 0 M11 27q3-3 5-9 M30 14q4-3 7 0"/></svg><span>壬水<small>阳水 · 潮头</small></span></span></td></tr>
-<tr><td><span class="emblem"><svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 25q12 3 24-2-2 9-12 10-9-1-12-8Z M21 33v3m-6 1h14 M21 24c-8-5 3-10 2-17 7 6 4 11 1 14q0-4-2-5-3 4-1 8Z"/></svg><span>丁火<small>阴火 · 灯焰</small></span></span></td><td><span class="emblem"><svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 25a10 10 0 1 1 20 0 M22 4v4M8 11l3 3m25-3-3 3 M5 21h4m26 0h4 M6 28q9-4 16 0t16 0 M10 33q7-3 13 0t11 0"/></svg><span>丙火<small>阳火 · 日轮</small></span></span></td></tr>
-<tr><td><span class="emblem"><svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 26q6-5 12-5t10-5q4-4 10-3 M5 30q9-6 16-5 6 0 10-5l6-2 M8 34q8-5 17-5 6 0 11-5 M11 19q8-1 13-7l6-2"/></svg><span>己土<small>阴土 · 梯田</small></span></span></td><td><span class="emblem"><svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 32 15 18l4 5L27 8l14 24 M12 22l3 1 2-2 M22 18l4-2 2 3 2-4 M18 32l7-11 M7 35q10-3 19-1t11 0"/></svg><span>戊土<small>阳土 · 叠嶂</small></span></span></td></tr></tbody></table><button class="entry" id="entry">第一平行宇宙 · 科学纪元</button><button class="entry" id="secondEntry">第二平行宇宙 · 阴阳五行</button><div class="guard-row" hidden><button id="guard" class="guard"></button></div><nav class="book-nav" aria-label="图鉴翻页"><button class="navbtn" id="prev" hidden>上一页</button><span id="counter">宇宙图鉴 ／ 封面</span><button class="navbtn" id="next" hidden>下一页</button></nav></section>
-<dialog id="guardDialog" aria-labelledby="guardTitle"><h2 id="guardTitle"></h2><p>本纪元的防守关卡正在筹备中。</p><form method="dialog"><button class="navbtn">返回图鉴</button></form></dialog>
-<dialog id="settings"><h2>设置</h2><label>音效音量 <output id="volText"></output><input type="range" id="volume" min="0" max="100"></label><label>画面亮度 <output id="lightText"></output><input type="range" id="brightness" min="45" max="120"></label><form method="dialog"><button class="navbtn">完成</button></form></dialog></main>
+</head>
+<body>
+<div class="stage" id="stage" data-view="cover">
+  <div class="bg bg-cover active" data-bg="cover"></div>
+  <div class="bg bg-science" data-bg="science"></div>
+  <div class="bg bg-wuxing" data-bg="wuxing"></div>
+  <div class="scrim"></div>
+
+  <header class="topbar">
+    <button class="brand" data-go="cover">星界守望</button>
+    <button class="text-btn" id="settingsBtn">设置</button>
+  </header>
+
+  <main class="host">
+    <!-- 封面 -->
+    <section class="view cover" id="view-cover">
+      <h1>星界守望</h1>
+      <p>多元宇宙塔防</p>
+      <button class="btn-primary" data-go="index">开始游戏</button>
+    </section>
+
+    <!-- 目录 -->
+    <section class="view index-wrap" id="view-index" hidden>
+      <span class="kicker">UNIVERSE INDEX</span>
+      <h2 tabindex="-1">平行宇宙</h2>
+      <div class="chapter-list">
+        <button class="chapter-row" data-go="science">
+          <span class="row-num">01</span>
+          <span>
+            <span class="row-title">科学纪元</span>
+            <span class="row-sub">四大学科塔 · 跨学科连锁反应</span>
+          </span>
+          <span class="row-status playable">2.5D 可玩</span>
+        </button>
+        <button class="chapter-row" data-go="wuxing">
+          <span class="row-num">02</span>
+          <span>
+            <span class="row-title">阴阳五行</span>
+            <span class="row-sub">黑白双水脉 · 十天干相生相克</span>
+          </span>
+          <span class="row-status">图鉴</span>
+        </button>
+        <button class="chapter-row" disabled>
+          <span class="row-num">03</span>
+          <span>
+            <span class="row-title">未启星门</span>
+            <span class="row-sub">后续章节筹备中</span>
+          </span>
+          <span class="row-status">敬请期待</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- 01 科学纪元 -->
+    <section class="view chapter" id="view-science" hidden>
+      <span class="kicker">01 · UNIVERSE I</span>
+      <h2 tabindex="-1">科学纪元</h2>
+      <p class="chapter-desc">感应塔沿航道排布，以物理、化学、生物与算法四座防御塔拦截实验室逃逸体，守住核心机器。</p>
+      <div class="science-grid">
+        <div class="science-cell">
+          <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><ellipse cx="16" cy="16" rx="13" ry="4.8" transform="rotate(-38 16 16)"/><ellipse cx="16" cy="16" rx="13" ry="4.8" transform="rotate(38 16 16)"/><circle cx="16" cy="16" r="2.2" fill="currentColor"/></svg>
+          <span><span class="cell-name">物理</span><span class="cell-sub">电磁线圈塔</span></span>
+        </div>
+        <div class="science-cell">
+          <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 3h10m-8 0v10L5 26q-1 3 3 3h16q4 0 2-4l-8-12V3M9 21q4-3 8 0t6 0"/></svg>
+          <span><span class="cell-name">化学</span><span class="cell-sub">晶格反应塔</span></span>
+        </div>
+        <div class="science-cell">
+          <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M9 3c0 12 14 14 14 26M23 3c0 12-14 14-14 26M10 6h12M12 10h8M12 22h8M10 26h12"/></svg>
+          <span><span class="cell-name">生物</span><span class="cell-sub">共生树塔</span></span>
+        </div>
+        <div class="science-cell">
+          <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="7" y="7" width="18" height="18" rx="2.5"/><rect x="12" y="12" width="8" height="8"/><path d="M12 3v4m8-4v4M12 25v4m8-4v4M3 12h4m-4 8h4m18-8h4m-4 8h4"/></svg>
+          <span><span class="cell-name">计算机</span><span class="cell-sub">算法阵列塔</span></span>
+        </div>
+      </div>
+      <div class="actions">
+        <a class="btn-primary" href="science-era.html">进入关卡</a>
+        <button class="btn-secondary" data-go="index">返回目录</button>
+      </div>
+    </section>
+
+    <!-- 02 阴阳五行 -->
+    <section class="view chapter" id="view-wuxing" hidden>
+      <span class="kicker">02 · UNIVERSE II</span>
+      <h2 tabindex="-1">阴阳五行</h2>
+      <p class="chapter-desc">一黑一白两条水脉环山而过，五座关隘分演十天干阴器与阳器，借五行生克共守阵眼。</p>
+      <div class="wuxing-list">
+        <div class="wx-row">
+          <span class="wx-key">金</span>
+          <span class="wx-item yin"><svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M9 34 27 16 12 34Z M26 17C17 17 18 9 23 10Q25 10 26 14C23 4 32 4 31 11Q30 14 28 15C36 9 39 17 32 19Q29 20 26 17Z"/></svg><span><span class="wx-name">辛金</span><span class="wx-sub">阴 · 银簪</span></span></span>
+          <span class="wx-item yang"><svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M17 11q0-7 5-7t5 7 M13 14q9-5 18 0l2 14 3 4q-14-4-28 0l3-5Z M13 18q9-4 18 0"/></svg><span><span class="wx-name">庚金</span><span class="wx-sub">阳 · 铜钟</span></span></span>
+        </div>
+        <div class="wx-row">
+          <span class="wx-key">木</span>
+          <span class="wx-item yin"><svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M8 12q13 4 27-6 M17 13q3 11-6 21 M23 12q6 9 0 19 M29 10q7 5 5 13"/></svg><span><span class="wx-name">乙木</span><span class="wx-sub">阴 · 垂柳</span></span></span>
+          <span class="wx-item yang"><svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M17 37 22 8m-6 19 5 1m-4-11 6 1 M20 21q5-8 14-9-4 7-14 9Z"/></svg><span><span class="wx-name">甲木</span><span class="wx-sub">阳 · 劲竹</span></span></span>
+        </div>
+        <div class="wx-row">
+          <span class="wx-key">水</span>
+          <span class="wx-item yin"><svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M21 6q-5 7-4 10a5 5 0 0 0 9-2q-1-3-5-8Z M15 23c-9 3 8 7 14 2 M9 27c-10 6 18 11 26 2"/></svg><span><span class="wx-name">癸水</span><span class="wx-sub">阴 · 涟漪</span></span></span>
+          <span class="wx-item yang"><svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M5 32q9 1 13-12 4-13 16-10-9 0-8 8 1 7 10 4-5 8-14 4"/></svg><span><span class="wx-name">壬水</span><span class="wx-sub">阳 · 潮头</span></span></span>
+        </div>
+        <div class="wx-row">
+          <span class="wx-key">火</span>
+          <span class="wx-item yin"><svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M10 25q12 3 24-2-2 9-12 10-9-1-12-8Z M21 24c-8-5 3-10 2-17 7 6 4 11 1 14"/></svg><span><span class="wx-name">丁火</span><span class="wx-sub">阴 · 灯焰</span></span></span>
+          <span class="wx-item yang"><svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M12 25a10 10 0 1 1 20 0 M22 4v4M8 11l3 3m25-3-3 3 M5 21h4m26 0h4"/></svg><span><span class="wx-name">丙火</span><span class="wx-sub">阳 · 日轮</span></span></span>
+        </div>
+        <div class="wx-row">
+          <span class="wx-key">土</span>
+          <span class="wx-item yin"><svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M5 26q6-5 12-5t10-5q4-4 10-3 M5 31q9-6 16-5 6 0 10-5l6-2"/></svg><span><span class="wx-name">己土</span><span class="wx-sub">阴 · 梯田</span></span></span>
+          <span class="wx-item yang"><svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 32 15 18l4 5L27 8l14 24 M18 32l7-11"/></svg><span><span class="wx-name">戊土</span><span class="wx-sub">阳 · 叠嶂</span></span></span>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn-secondary" id="wuxingSoonBtn">关卡筹备中</button>
+        <button class="btn-secondary" data-go="index">返回目录</button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="bottombar">
+    <nav class="nav-links" aria-label="页面切换">
+      <button class="nav-link" data-go="cover" aria-current="page">封面</button>
+      <button class="nav-link" data-go="index">目录</button>
+      <button class="nav-link" data-go="science">01 科学纪元</button>
+      <button class="nav-link" data-go="wuxing">02 阴阳五行</button>
+    </nav>
+    <span class="nav-hint">← → 切换 · ESC 返回</span>
+  </footer>
+</div>
+
+<dialog id="settingsDialog">
+  <h3>设置</h3>
+  <label>音效音量 <output id="volOut">55%</output><input type="range" id="volume" min="0" max="100" value="55"></label>
+  <label>画面亮度 <output id="lightOut">100%</output><input type="range" id="brightness" min="50" max="120" value="100"></label>
+  <div class="dialog-foot"><button class="text-btn" data-close>完成</button></div>
+</dialog>
+
+<dialog id="soonDialog">
+  <h3>阴阳五行</h3>
+  <p style="margin:0 0 18px;color:var(--text-dim);font-size:13.5px">第二章黑白双水脉关卡正在筹备中。</p>
+  <div class="dialog-foot"><button class="text-btn" data-close>返回</button></div>
+</dialog>
+
 <script>
 const byId = id => document.getElementById(id);
-const sky = byId('starlight');
-const skyContext = sky.getContext('2d');
-const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
-const stars = Array.from({length:75}, () => ({
-  x:Math.random(), y:Math.random(), phase:Math.random()*Math.PI*2, size:.6+Math.random()*1.1
-}));
-let skyFrame = 0;
-function animateSky(time) {
-  const w=sky.clientWidth, h=sky.clientHeight;
-  const ratio=Math.min(devicePixelRatio || 1,2);
-  if(sky.width!==Math.round(w*ratio) || sky.height!==Math.round(h*ratio)){
-    sky.width=Math.round(w*ratio); sky.height=Math.round(h*ratio);
-  }
-  const ctx=skyContext, t=time/1000;
-  ctx.setTransform(ratio,0,0,ratio,0,0);
-  ctx.clearRect(0,0,w,h);
-  ctx.fillStyle='#ffe6aa';
-  for(const star of stars){
-    ctx.globalAlpha=.36+.3*Math.sin(t*.75+star.phase);
-    ctx.beginPath();
-    ctx.arc(star.x*w+4*Math.sin(t*.13+star.phase),((star.y*h-t*(1+star.size))%h+h)%h,star.size,0,Math.PI*2);
-    ctx.fill();
-  }
-  for(let i=0;i<3;i++){
-    const u=(t*.047+i/3)%1;
-    const x=w*(.13+.74*u), y=h*(.76-.11*Math.sin(u*Math.PI*2));
-    const glow=ctx.createRadialGradient(x,y,0,x,y,9);
-    glow.addColorStop(0,'#fff1c4');glow.addColorStop(.25,'#ffcf81ba');glow.addColorStop(1,'#ffce7900');
-    ctx.fillStyle=glow;ctx.globalAlpha=Math.sin(Math.PI*u)*.9;ctx.fillRect(x-9,y-9,18,18);
-  }
-  ctx.globalAlpha=1;
-  skyFrame=requestAnimationFrame(animateSky);
+const VIEWS = ['cover', 'index', 'science', 'wuxing'];
+const BG = { cover: 'cover', index: 'cover', science: 'science', wuxing: 'wuxing' };
+let current = 'cover';
+
+function go(name) {
+  if (!VIEWS.includes(name)) return;
+  current = name;
+  byId('stage').dataset.view = name;
+  VIEWS.forEach(v => { byId('view-' + v).hidden = v !== name; });
+  document.querySelectorAll('.bg').forEach(el => el.classList.toggle('active', el.dataset.bg === BG[name]));
+  document.querySelectorAll('.nav-link').forEach(el => {
+    if (el.dataset.go === name) el.setAttribute('aria-current', 'page');
+    else el.removeAttribute('aria-current');
+  });
+  const h2 = byId('view-' + name).querySelector('h2');
+  if (h2) h2.focus({ preventScroll: true });
 }
-function updateSky(){
-  cancelAnimationFrame(skyFrame);
-  if(!skyContext) return;
-  if(byId('cover').hidden || document.hidden || reducedMotion.matches){
-    skyContext.clearRect(0,0,sky.width,sky.height);return;
-  }
-  skyFrame=requestAnimationFrame(animateSky);
-}
-document.addEventListener('visibilitychange',updateSky);
-reducedMotion.addEventListener('change',updateSky);
-updateSky();
-const pages = [
-  ['UNIVERSE INDEX', '平行宇宙目录', '选择一个宇宙，展开它的篇章。'],
-  ['UNIVERSE Ⅰ', '科学纪元', '第一平行宇宙 · 高耸的感应塔捕捉星际电流，守护通往核心的最后一条航道。'],
-  ['UNIVERSE Ⅱ', '阴阳五行', '第二平行宇宙 · 一黑一白两条水脉环山而过。金、木、水、火、土五座关隘沿岸而立，共守阵眼。'],
-  ['NEXT UNIVERSE', '敬请期待', '下一座宇宙的星门尚未开启。']
-];
-let page = -1;
-let audio;
-function chime() {
-  try {
-    audio ??= new AudioContext();
-    audio.resume().catch(() => {});
-    const tone = audio.createOscillator(), gain = audio.createGain();
-    tone.frequency.value = 392;
-    gain.gain.setValueAtTime(Number(byId('volume').value) * .0009, audio.currentTime);
-    gain.gain.linearRampToValueAtTime(0, audio.currentTime + .23);
-    tone.connect(gain).connect(audio.destination);
-    tone.start(); tone.stop(audio.currentTime + .24);
-  } catch {}
-}
-// Keep the spread still. A diagonal fold travels from the lower corner
-// across the old leaf; the narrow band along the fold is its curved underside.
-let turning = false;
-function curl(book, oldPage, forward) {
-  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  const canvas = document.createElement('canvas');
-  canvas.id = 'turnsheet';
-  canvas.setAttribute('aria-hidden','true');
-  oldPage.removeAttribute('id');
-  oldPage.querySelectorAll('[id]').forEach(el => el.removeAttribute('id'));
-  oldPage.inert = true;
-  oldPage.hidden = false;
-  oldPage.setAttribute('aria-hidden','true');
-  oldPage.classList.add('old-page');
-  book.append(oldPage, canvas);
-  const ctx = canvas.getContext('2d');
-  if (!ctx) { canvas.remove(); oldPage.remove(); return; }
-  const w = book.clientWidth, h = book.clientHeight;
-  const ratio = Math.min(devicePixelRatio || 1, 2);
-  canvas.width = w * ratio; canvas.height = h * ratio;
-  ctx.scale(ratio,ratio);
-  turning = true;
-  const start = performance.now();
-  function draw(now) {
-    const t = Math.min(1,(now-start)/900);
-    const progress = t*t*(3-2*t);
-    ctx.clearRect(0,0,w,h);
-    ctx.save();
-    if (!forward) { ctx.translate(w,0); ctx.scale(-1,1); }
-    const tilt = Math.min(w*.32,h*.38);
-    const bottom = w + tilt - (w + 2*tilt)*progress;
-    const top = bottom + tilt;
-    const curlWidth = Math.sin(Math.PI*t)*Math.min(115,w*.21);
-    const x = v => forward ? v : w-v;
-    const edge = [];
-    for(let step=0;step<=20;step++){
-      const u=step/20;
-      const bx=(1-u)*(1-u)*top+2*(1-u)*u*(top-tilt*.12)+u*u*bottom;
-      const by=(2*(1-u)*u*.56+u*u)*h;
-      edge.push(x(bx)+'px '+by+'px');
-    }
-    oldPage.style.clipPath='polygon('+[x(0)+'px 0',...edge,x(0)+'px '+h+'px'].join(',')+')';
-    if(curlWidth>0){
-      const shade=ctx.createLinearGradient(top-curlWidth,0,top+12,tilt/h*(curlWidth+12));
-      shade.addColorStop(0,'#ac9774');shade.addColorStop(.38,'#fff6d9');shade.addColorStop(.76,'#e6d7b3');shade.addColorStop(1,'#8c785e');
-      ctx.beginPath();ctx.moveTo(top,0);ctx.quadraticCurveTo(top-tilt*.12,h*.56,bottom,h);
-      ctx.quadraticCurveTo(bottom-curlWidth*.9,h*.98,bottom-curlWidth,h*.91);
-      ctx.bezierCurveTo(top-curlWidth*1.25,h*.55,top-curlWidth*.9,h*.06,top,0);
-      ctx.fillStyle=shade;ctx.shadowColor='#32251677';ctx.shadowBlur=12;ctx.shadowOffsetX=forward?6:-6;ctx.fill();
-    }
-    ctx.restore();
-    if(t<1) requestAnimationFrame(draw); else { canvas.remove(); oldPage.remove(); turning=false; }
-  }
-  draw(start);
-}
-function show(index) {
-  if (turning || index < -1 || index >= pages.length) return;
-  const oldPage = byId('book').cloneNode(true);
-  if(page === -1){oldPage.className='book binding';oldPage.textContent='星 界 守 望';}
-  const forward = index > page;
-  page = index; chime();
-  const onCover = page === -1;
-  byId('cover').hidden = !onCover;
-  updateSky();
-  for (const id of ['book','prev','next']) byId(id).hidden = onCover;
-  byId('counter').textContent = onCover ? '宇宙图鉴 ／ 封面' : (page + 1) + ' ／ ' + pages.length;
-  if (onCover) { byId('start').focus(); return; }
-  ['eyebrow','heading','description'].forEach((id,i) => byId(id).textContent = pages[page][i]);
-  byId('subjects').hidden = page !== 1;
-  byId('elements').hidden = page !== 2;
-  byId('entry').hidden = page !== 0;
-  byId('secondEntry').hidden = page !== 0;
-  const hasChapter = page === 1 || page === 2;
-  byId('guard').parentElement.hidden = !hasChapter;
-  byId('guard').textContent = hasChapter ? '守护' + pages[page][1] : '';
-  byId('next').disabled = page === pages.length - 1;
-  byId('prev').textContent = page === 0 ? '返回封面' : '上一页';
-  const book = byId('book');
-  book.className = ['book', 'book illustrated', 'book wuxing', 'book'][page];
-  curl(book, oldPage, forward);
-  byId('heading').focus({preventScroll:true});
-}
-byId('start').onclick = () => show(0);
-byId('entry').onclick = () => show(1);
-byId('secondEntry').onclick = () => show(2);
-byId('prev').onclick = () => show(page - 1);
-byId('next').onclick = () => show(page + 1);
-byId('guard').onclick = () => {
-  if (turning) return;
-  if (page === 1) { location.href = 'science-era.html'; return; }
-  byId('guardTitle').textContent = byId('guard').textContent;
-  byId('guardDialog').showModal();
-};
-byId('gear').onclick = () => byId('settings').showModal();
-for (const [id, output, initial] of [['volume','volText',55],['brightness','lightText',100]]) {
-  const slider = byId(id);
-  slider.value = initial;
-  try { slider.value = localStorage.getItem('atlas.' + id) ?? initial; } catch {}
-  function apply() {
-    byId(output).textContent = slider.value + '%';
-    if (id === 'brightness') document.documentElement.style.filter = 'brightness(' + slider.value + '%)';
-  }
+
+document.querySelectorAll('[data-go]').forEach(el => el.addEventListener('click', () => go(el.dataset.go)));
+
+document.addEventListener('keydown', e => {
+  if (document.querySelector('dialog[open]')) return;
+  const i = VIEWS.indexOf(current);
+  if (e.key === 'ArrowRight' && i < VIEWS.length - 1) go(VIEWS[i + 1]);
+  if (e.key === 'ArrowLeft' && i > 0) go(VIEWS[i - 1]);
+  if (e.key === 'Escape' && current !== 'cover') go(current === 'index' ? 'cover' : 'index');
+});
+
+byId('settingsBtn').onclick = () => byId('settingsDialog').showModal();
+byId('wuxingSoonBtn').onclick = () => byId('soonDialog').showModal();
+document.querySelectorAll('dialog').forEach(dlg => {
+  dlg.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', () => dlg.close()));
+  dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); });
+});
+
+for (const [id, outId, def] of [['volume', 'volOut', 55], ['brightness', 'lightOut', 100]]) {
+  const input = byId(id);
+  let val = def;
+  try { val = localStorage.getItem('atlas.' + id) ?? def; } catch {}
+  input.value = val;
+  const apply = () => {
+    byId(outId).textContent = input.value + '%';
+    if (id === 'brightness') document.documentElement.style.filter = `brightness(${input.value}%)`;
+  };
   apply();
-  slider.oninput = () => { apply(); try { localStorage.setItem('atlas.' + id, slider.value); } catch {} };
+  input.addEventListener('input', () => {
+    apply();
+    try { localStorage.setItem('atlas.' + id, input.value); } catch {}
+  });
 }
-byId('volume').onchange = chime;
-</script></html>
+</script>
+</body>
+</html>
