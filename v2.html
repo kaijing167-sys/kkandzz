@@ -1,0 +1,1681 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>星界守望 · 多元宇宙塔防</title>
+<style>
+:root {
+  --bg: #f4efe4;
+  --bg-dot: #dfd6c3;
+  --card: #fffdf8;
+  --card-alt: #f8f3e8;
+  --ink: #1b222c;
+  --ink-soft: #4e5968;
+  --ink-mute: #7c8591;
+
+  /* Universe I: Playful Lab Palette */
+  --lab-teal: #1d8a78;
+  --lab-teal-soft: #e0f4ef;
+  --lab-amber: #f4b731;
+  --lab-coral: #e8624a;
+  --lab-blue: #3b7dd8;
+
+  /* Universe II: Modern Guochao Palette */
+  --wx-vermilion: #c94a34;
+  --wx-vermilion-soft: #fae7e2;
+  --wx-jade: #287a6b;
+  --wx-jade-soft: #e1f1ed;
+  --wx-ochre: #d89a2b;
+  --wx-ink: #243038;
+
+  --border: 2.5px solid var(--ink);
+  --shadow-sm: 0 3px 0 var(--ink);
+  --shadow-md: 0 5px 0 var(--ink);
+  --shadow-lg: 0 7px 0 var(--ink);
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 22px;
+
+  --font-display: "Yuanti SC", "Hiragino Maru Gothic ProN", "SF Pro Rounded", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --font-ui: "SF Pro Rounded", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  min-height: 100%;
+  background-color: var(--bg);
+  background-image: radial-gradient(var(--bg-dot) 1.4px, transparent 1.4px);
+  background-size: 22px 22px;
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: 15px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+button:focus-visible,
+input:focus-visible {
+  outline: 3px solid var(--lab-blue);
+  outline-offset: 2px;
+}
+
+[hidden] { display: none !important; }
+
+/* ---------- Shell ---------- */
+.app {
+  min-height: 100svh;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 clamp(14px, 3vw, 28px);
+}
+
+/* ---------- Top Game HUD ---------- */
+.hud-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px 0 12px;
+}
+
+.brand-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 14px 7px 10px;
+  background: var(--card);
+  border: var(--border);
+  border-radius: 999px;
+  box-shadow: var(--shadow-sm);
+  font-weight: 800;
+  font-size: 14px;
+  letter-spacing: 0.04em;
+  transition: transform 0.12s, box-shadow 0.12s;
+}
+
+.brand-pill:hover { transform: translateY(-1px); box-shadow: 0 4px 0 var(--ink); }
+.brand-pill:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--ink); }
+
+.brand-dot {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--lab-amber);
+  border: 2px solid var(--ink);
+  display: grid;
+  place-items: center;
+}
+
+.brand-dot svg { width: 14px; height: 14px; }
+
+.hud-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.stage-chip {
+  padding: 6px 12px;
+  background: #ebe3d3;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--ink);
+}
+
+.btn-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  background: var(--card);
+  border: var(--border);
+  border-radius: 999px;
+  box-shadow: var(--shadow-sm);
+  font-size: 13px;
+  font-weight: 700;
+  transition: transform 0.12s, box-shadow 0.12s, background 0.12s;
+}
+
+.btn-pill:hover { background: #fff7e2; transform: translateY(-1px); box-shadow: 0 4px 0 var(--ink); }
+.btn-pill:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--ink); }
+.btn-pill svg { width: 15px; height: 15px; }
+
+/* ---------- Tactile Game Buttons ---------- */
+.btn-game {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 13px 26px;
+  background: var(--lab-coral);
+  color: #fffdf8;
+  border: var(--border);
+  border-radius: 14px;
+  box-shadow: var(--shadow-md);
+  font-weight: 900;
+  font-size: 16px;
+  letter-spacing: 0.06em;
+  transition: transform 0.1s, box-shadow 0.1s, filter 0.1s;
+}
+
+.btn-game:hover { filter: brightness(1.05); transform: translateY(-1px); box-shadow: 0 6px 0 var(--ink); }
+.btn-game:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--ink); }
+
+.btn-game.teal { background: var(--lab-teal); }
+.btn-game.vermilion { background: var(--wx-vermilion); }
+.btn-game.amber { background: var(--lab-amber); color: var(--ink); }
+.btn-game.ghost {
+  background: var(--card);
+  color: var(--ink);
+  padding: 10px 18px;
+  font-size: 14px;
+  box-shadow: var(--shadow-sm);
+}
+.btn-game.ghost:hover { background: #fff7e2; box-shadow: 0 4px 0 var(--ink); }
+.btn-game.ghost:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--ink); }
+
+/* ---------- Main View Area ---------- */
+.view-wrap {
+  display: grid;
+  align-items: center;
+  padding: 8px 0 16px;
+}
+
+.screen {
+  animation: popIn 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes popIn {
+  from { opacity: 0; transform: translateY(10px) scale(0.99); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ---------- Cover Screen ---------- */
+.cover-grid {
+  display: grid;
+  grid-template-columns: minmax(300px, 460px) 1fr;
+  gap: clamp(20px, 4vw, 44px);
+  align-items: center;
+}
+
+.cover-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.badge-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.tag-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border: 2px solid var(--ink);
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  background: var(--lab-amber);
+  color: var(--ink);
+}
+
+.tag-badge.soft { background: var(--card); }
+
+.hero-logo {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(3.3rem, 6.8vw, 5.2rem);
+  line-height: 1.04;
+  letter-spacing: 0.06em;
+  color: var(--lab-amber);
+  -webkit-text-stroke: 2.6px var(--ink);
+  paint-order: stroke fill;
+  text-shadow: 0 6px 0 var(--ink);
+}
+
+.hero-sub {
+  margin: 12px 0 18px;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--ink);
+  letter-spacing: 0.08em;
+}
+
+.hero-desc {
+  margin: 0 0 24px;
+  color: var(--ink-soft);
+  font-size: 15px;
+  max-width: 390px;
+}
+
+.hero-cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+/* Handcrafted Cover Diorama Board */
+.diorama-frame {
+  position: relative;
+  background: #e9f2ee;
+  border: 3px solid var(--ink);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  aspect-ratio: 16 / 10.5;
+}
+
+.diorama-frame svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.float-slow { animation: floatY 3.6s ease-in-out infinite; }
+.float-alt { animation: floatY 4.2s ease-in-out -1.6s infinite; }
+@keyframes floatY {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
+}
+
+/* ---------- Universe Select Screen ---------- */
+.section-top {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.section-top h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(1.9rem, 3.8vw, 2.6rem);
+  letter-spacing: 0.04em;
+  line-height: 1.1;
+}
+
+.section-top p {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.world-cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.world-card {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  background: var(--card);
+  border: 3px solid var(--ink);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  transition: transform 0.14s, box-shadow 0.14s;
+}
+
+.world-card:hover { transform: translateY(-3px); box-shadow: 0 8px 0 var(--ink); }
+.world-card:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--ink); }
+
+.world-banner {
+  position: relative;
+  aspect-ratio: 16 / 9.5;
+  border-bottom: 3px solid var(--ink);
+  overflow: hidden;
+}
+
+.world-banner svg { width: 100%; height: 100%; display: block; }
+
+.world-num {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 3px 10px;
+  border: 2px solid var(--ink);
+  border-radius: 8px;
+  background: var(--card);
+  font-weight: 800;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+}
+
+.world-body {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.world-body h3 {
+  margin: 0 0 6px;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 1.5rem;
+  letter-spacing: 0.04em;
+}
+
+.world-body p {
+  margin: 0 0 14px;
+  font-size: 13.5px;
+  color: var(--ink-soft);
+  flex: 1;
+}
+
+.pill-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.mini-pill {
+  padding: 3px 8px;
+  border: 1.8px solid var(--ink);
+  border-radius: 7px;
+  font-size: 11.5px;
+  font-weight: 700;
+  background: var(--card-alt);
+}
+
+.mini-pill.teal { background: var(--lab-teal-soft); }
+.mini-pill.red { background: var(--wx-vermilion-soft); }
+
+.world-go {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 10px;
+  border-top: 2px dashed #d6cebe;
+  font-weight: 800;
+  font-size: 13.5px;
+}
+
+.world-card.locked {
+  background: #f1ece1;
+  opacity: 0.85;
+}
+
+/* ---------- Codex Chapter Layout (Universe I & II) ---------- */
+.codex-layout {
+  display: grid;
+  grid-template-columns: minmax(320px, 1.02fr) minmax(340px, 1fr);
+  gap: 20px;
+  align-items: stretch;
+}
+
+.board-panel {
+  display: flex;
+  flex-direction: column;
+  background: var(--card);
+  border: 3px solid var(--ink);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+}
+
+.board-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 18px;
+  border-bottom: 3px solid var(--ink);
+  background: var(--lab-teal);
+  color: #fffdf8;
+}
+
+.board-header.wuxing-head {
+  background: var(--wx-vermilion);
+}
+
+.board-header h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 1.65rem;
+  letter-spacing: 0.04em;
+  line-height: 1.1;
+}
+
+.board-header .sub-kicker {
+  font-size: 12px;
+  font-weight: 700;
+  opacity: 0.9;
+  letter-spacing: 0.08em;
+}
+
+.board-canvas {
+  position: relative;
+  flex: 1;
+  min-height: 290px;
+  background: #e8f4f0;
+  border-bottom: 3px solid var(--ink);
+}
+
+.board-canvas.wuxing-map {
+  background: #f5efe0;
+}
+
+.board-canvas svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.board-footer {
+  padding: 14px 18px;
+  background: var(--card-alt);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.board-lore {
+  margin: 0;
+  font-size: 13.5px;
+  color: var(--ink-soft);
+  font-weight: 600;
+}
+
+/* Right Codex Deck */
+.deck-panel {
+  display: flex;
+  flex-direction: column;
+  background: var(--card);
+  border: 3px solid var(--ink);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: 16px;
+}
+
+.tab-bar {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.tab-pill {
+  padding: 8px 10px;
+  background: var(--card-alt);
+  border: 2px solid var(--ink);
+  border-radius: 10px;
+  font-weight: 800;
+  font-size: 13px;
+  transition: transform 0.1s, background 0.12s, box-shadow 0.1s;
+}
+
+.tab-pill:hover { background: #fff7e2; }
+
+.tab-pill[aria-selected="true"] {
+  background: var(--lab-amber);
+  box-shadow: 0 3px 0 var(--ink);
+  transform: translateY(-2px);
+}
+
+/* Cards inside Deck */
+.card-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.unit-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  text-align: left;
+  background: var(--card-alt);
+  border: 2px solid var(--ink);
+  border-radius: 12px;
+  transition: transform 0.1s, box-shadow 0.1s, background 0.12s;
+}
+
+.unit-card.full { grid-column: 1 / -1; }
+
+.unit-card:hover { background: #fff8e6; }
+
+.unit-card[aria-pressed="true"] {
+  background: #fff4d2;
+  box-shadow: 0 3px 0 var(--ink);
+  transform: translateY(-2px);
+}
+
+.unit-icon {
+  width: 40px;
+  height: 40px;
+  flex: none;
+  border-radius: 10px;
+  border: 2px solid var(--ink);
+  background: var(--card);
+  display: grid;
+  place-items: center;
+}
+
+.unit-icon svg { width: 24px; height: 24px; }
+.unit-icon.teal { background: var(--lab-teal-soft); color: #125c4f; }
+.unit-icon.amber { background: #fff1cc; color: #8c5a00; }
+.unit-icon.coral { background: #fde5df; color: #a1321f; }
+.unit-icon.blue { background: #e1ecfc; color: #1f4f96; }
+
+.unit-title {
+  display: block;
+  font-weight: 800;
+  font-size: 14.5px;
+  line-height: 1.2;
+}
+
+.unit-sub {
+  display: block;
+  font-size: 12px;
+  color: var(--ink-soft);
+  margin-top: 2px;
+}
+
+/* Reaction / Cycle Rules List */
+.combo-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.combo-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 9px 12px;
+  background: var(--card-alt);
+  border: 2px solid var(--ink);
+  border-radius: 12px;
+  font-size: 13px;
+}
+
+.combo-eq {
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.combo-res {
+  color: var(--ink-soft);
+  font-weight: 600;
+  text-align: right;
+}
+
+/* Wuxing 10-Stems Compact Game Grid */
+.stems-header {
+  display: grid;
+  grid-template-columns: 32px 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 6px;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--ink-soft);
+  padding: 0 2px;
+}
+
+.stems-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.stem-line {
+  display: grid;
+  grid-template-columns: 32px 1fr 1fr;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.wx-chip {
+  display: grid;
+  place-items: center;
+  border: 2px solid var(--ink);
+  border-radius: 9px;
+  background: var(--card-alt);
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 15px;
+}
+
+.stem-tile {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 9px;
+  text-align: left;
+  border: 2px solid var(--ink);
+  border-radius: 10px;
+  background: var(--card);
+  transition: transform 0.1s, box-shadow 0.1s, background 0.12s;
+}
+
+.stem-tile.yin { background: #edf7f4; }
+.stem-tile.yang { background: #fdf1e6; }
+
+.stem-tile:hover { filter: brightness(0.98); }
+
+.stem-tile[aria-pressed="true"] {
+  background: var(--lab-amber);
+  box-shadow: 0 3px 0 var(--ink);
+  transform: translateY(-2px);
+}
+
+.stem-tile svg {
+  width: 28px;
+  height: 28px;
+  flex: none;
+  color: var(--ink);
+}
+
+.stem-name {
+  display: block;
+  font-weight: 800;
+  font-size: 13.5px;
+  line-height: 1.15;
+}
+
+.stem-tag {
+  display: block;
+  font-size: 11px;
+  color: var(--ink-soft);
+}
+
+/* Inspector Box */
+.inspector {
+  margin-top: auto;
+  padding-top: 12px;
+}
+
+.inspector-box {
+  padding: 12px 14px;
+  background: #1b222c;
+  color: #fffdf8;
+  border: 2.5px solid var(--ink);
+  border-radius: 14px;
+  min-height: 82px;
+}
+
+.inspector-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.inspector-title {
+  font-weight: 800;
+  font-size: 14.5px;
+  color: var(--lab-amber);
+}
+
+.inspector-tag {
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.12);
+  font-size: 11px;
+  font-weight: 700;
+  color: #e4ebf2;
+}
+
+.inspector-desc {
+  margin: 0;
+  font-size: 13px;
+  color: #d6dde6;
+  line-height: 1.55;
+}
+
+.deck-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+/* ---------- Next Universe ---------- */
+.next-card {
+  max-width: 520px;
+  margin: 0 auto;
+  text-align: center;
+  padding: 36px 28px;
+  background: var(--card);
+  border: 3px solid var(--ink);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+}
+
+.next-card h2 {
+  margin: 12px 0 8px;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 2rem;
+}
+
+.next-card p {
+  margin: 0 0 22px;
+  color: var(--ink-soft);
+}
+
+/* ---------- Bottom Navigation Dock ---------- */
+.hud-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0 20px;
+}
+
+.dock {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px;
+  background: var(--card);
+  border: var(--border);
+  border-radius: 14px;
+  box-shadow: var(--shadow-sm);
+}
+
+.dock-btn {
+  padding: 6px 13px;
+  border-radius: 9px;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--ink-soft);
+  transition: background 0.12s, color 0.12s;
+}
+
+.dock-btn:hover { background: var(--card-alt); color: var(--ink); }
+
+.dock-btn[aria-current="page"] {
+  background: var(--ink);
+  color: var(--lab-amber);
+}
+
+.kbd-hint {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink-mute);
+}
+
+/* ---------- Modals ---------- */
+dialog {
+  padding: 0;
+  width: min(92vw, 400px);
+  background: var(--card);
+  color: var(--ink);
+  border: 3px solid var(--ink);
+  border-radius: var(--radius-md);
+  box-shadow: 0 10px 0 var(--ink);
+}
+
+dialog::backdrop {
+  background: rgba(27, 34, 44, 0.58);
+}
+
+.modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  background: var(--lab-amber);
+  border-bottom: 3px solid var(--ink);
+}
+
+.modal-head h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 1.4rem;
+}
+
+.modal-x {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  border: 2px solid var(--ink);
+  background: var(--card);
+  font-weight: 900;
+  display: grid;
+  place-items: center;
+}
+
+.modal-body {
+  padding: 18px;
+}
+
+.modal-body p {
+  margin: 0 0 16px;
+  color: var(--ink-soft);
+  font-size: 14.5px;
+}
+
+.slider-group {
+  display: block;
+  margin-bottom: 16px;
+}
+
+.slider-top {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 800;
+  font-size: 13.5px;
+  margin-bottom: 8px;
+}
+
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 8px;
+  background: #e5dcc9;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--lab-coral);
+  border: 2.5px solid var(--ink);
+  cursor: pointer;
+}
+
+.modal-foot {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 960px) {
+  .cover-grid,
+  .codex-layout,
+  .world-cards {
+    grid-template-columns: 1fr;
+  }
+  .section-top {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 600px) {
+  .stage-chip, .kbd-hint { display: none; }
+  .card-grid-2 { grid-template-columns: 1fr; }
+  .hud-bottom { flex-direction: column; align-items: stretch; }
+  .dock { justify-content: space-between; overflow-x: auto; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- 顶部 HUD -->
+  <header class="hud-top">
+    <button class="brand-pill" id="homeBtn" aria-label="返回封面">
+      <span class="brand-dot" aria-hidden="true">
+        <svg viewBox="0 0 20 20" fill="none" stroke="#1b222c" stroke-width="2.2" stroke-linecap="round">
+          <circle cx="10" cy="10" r="3.2"/>
+          <path d="M10 2v3M10 15v3M2 10h3M15 10h3"/>
+        </svg>
+      </span>
+      <span>星界守望</span>
+    </button>
+
+    <div class="hud-actions">
+      <span class="stage-chip" id="stageChip">封面 · 主菜单</span>
+      <button class="btn-pill" id="settingsBtn">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <path d="M3 6h14M3 14h14"/>
+          <circle cx="7" cy="6" r="2.2" fill="#fffdf8"/>
+          <circle cx="13" cy="14" r="2.2" fill="#fffdf8"/>
+        </svg>
+        <span>设置</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- 主舞台 -->
+  <main class="view-wrap">
+    <!-- 1. 封面 -->
+    <section class="screen cover-grid" id="screen-cover">
+      <div class="cover-copy">
+        <div class="badge-row">
+          <span class="tag-badge">塔防图鉴 v0.2</span>
+          <span class="tag-badge soft">双平行宇宙</span>
+        </div>
+        <h1 class="hero-logo">星界守望</h1>
+        <p class="hero-sub">多元宇宙策略塔防</p>
+        <p class="hero-desc">跳出“单塔克单怪”的套路——在失控的科学实验室触发跨学科连锁反应，在黑白双水脉用十天干与五行生克守住阵眼。</p>
+        <div class="hero-cta-row">
+          <button class="btn-game" id="startBtn">开始探索图鉴 →</button>
+          <button class="btn-game ghost" data-go="science">直达科学纪元</button>
+        </div>
+      </div>
+
+      <!-- 手绘矢量微缩沙盘插画（取代 AI 风格壁纸） -->
+      <div class="diorama-frame" aria-hidden="true">
+        <svg viewBox="0 0 640 420" fill="none">
+          <!-- 天空与几何云 -->
+          <rect width="640" height="420" fill="#e6f1ec"/>
+          <circle cx="530" cy="86" r="38" fill="#f4b731" stroke="#1b222c" stroke-width="3"/>
+          <g fill="#fffdf8" stroke="#1b222c" stroke-width="2.5">
+            <rect x="64" y="54" width="94" height="28" rx="14"/>
+            <rect x="285" y="42" width="76" height="24" rx="12"/>
+            <rect x="448" y="132" width="84" height="24" rx="12"/>
+          </g>
+
+          <!-- 连接双宇宙的虚线传送弧 -->
+          <path d="M190 220 C 260 110, 380 110, 450 215" stroke="#1b222c" stroke-width="3" stroke-dasharray="9 8" stroke-linecap="round"/>
+          <circle cx="320" cy="136" r="14" fill="#f4b731" stroke="#1b222c" stroke-width="3"/>
+          <path d="M314 136h12M320 130v12" stroke="#1b222c" stroke-width="2.5" stroke-linecap="round"/>
+
+          <!-- 左侧：科学纪元浮岛（玩具实验室风） -->
+          <g class="float-slow">
+            <polygon points="56,272 186,216 306,272 186,330" fill="#9cd3c4" stroke="#1b222c" stroke-width="3" stroke-linejoin="round"/>
+            <polygon points="56,272 186,330 186,356 56,298" fill="#1d8a78" stroke="#1b222c" stroke-width="3" stroke-linejoin="round"/>
+            <polygon points="306,272 186,330 186,356 306,298" fill="#146457" stroke="#1b222c" stroke-width="3" stroke-linejoin="round"/>
+            <!-- 实验室小路 -->
+            <path d="M106 274 L182 242 L252 274" stroke="#fffdf8" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M106 274 L182 242 L252 274" stroke="#1b222c" stroke-width="2.5" stroke-dasharray="6 6" stroke-linecap="round"/>
+            <!-- 电磁线圈塔 -->
+            <rect x="164" y="196" width="36" height="46" rx="8" fill="#fffdf8" stroke="#1b222c" stroke-width="3"/>
+            <ellipse cx="182" cy="196" rx="22" ry="8" fill="#f4b731" stroke="#1b222c" stroke-width="3"/>
+            <circle cx="182" cy="176" r="11" fill="#e8624a" stroke="#1b222c" stroke-width="3"/>
+            <!-- 小绿史莱姆 -->
+            <path d="M126 278 C126 260, 154 260, 154 278 Z" fill="#6fd15c" stroke="#1b222c" stroke-width="2.5"/>
+            <circle cx="136" cy="272" r="2" fill="#1b222c"/>
+            <circle cx="145" cy="272" r="2" fill="#1b222c"/>
+            <!-- 小标签 -->
+            <rect x="122" y="348" width="124" height="28" rx="9" fill="#fffdf8" stroke="#1b222c" stroke-width="2.5"/>
+            <text x="184" y="367" text-anchor="middle" fill="#1b222c" font-size="13" font-weight="800">Ⅰ 科学纪元</text>
+          </g>
+
+          <!-- 右侧：阴阳五行浮岛（现代国潮山水风） -->
+          <g class="float-alt">
+            <polygon points="340,264 466,208 590,264 466,322" fill="#efe4cd" stroke="#1b222c" stroke-width="3" stroke-linejoin="round"/>
+            <polygon points="340,264 466,322 466,348 340,290" fill="#c94a34" stroke="#1b222c" stroke-width="3" stroke-linejoin="round"/>
+            <polygon points="590,264 466,322 466,348 590,290" fill="#8f3121" stroke="#1b222c" stroke-width="3" stroke-linejoin="round"/>
+            <!-- 黑白双水脉 -->
+            <path d="M388 264 Q432 246 466 266" stroke="#243038" stroke-width="10" stroke-linecap="round"/>
+            <path d="M542 264 Q498 246 466 266" stroke="#fffdf8" stroke-width="10" stroke-linecap="round"/>
+            <path d="M542 264 Q498 246 466 266" stroke="#1b222c" stroke-width="2" stroke-linecap="round"/>
+            <!-- 青绿山峰与朱红小亭 -->
+            <polygon points="410,248 446,192 482,248" fill="#287a6b" stroke="#1b222c" stroke-width="3" stroke-linejoin="round"/>
+            <rect x="466" y="218" width="38" height="28" fill="#fffdf8" stroke="#1b222c" stroke-width="3"/>
+            <polygon points="456,220 485,198 514,220" fill="#c94a34" stroke="#1b222c" stroke-width="3" stroke-linejoin="round"/>
+            <!-- 小标签 -->
+            <rect x="404" y="340" width="124" height="28" rx="9" fill="#fffdf8" stroke="#1b222c" stroke-width="2.5"/>
+            <text x="466" y="359" text-anchor="middle" fill="#1b222c" font-size="13" font-weight="800">Ⅱ 阴阳五行</text>
+          </g>
+        </svg>
+      </div>
+    </section>
+
+    <!-- 2. 平行宇宙目录 -->
+    <section class="screen" id="screen-index" hidden>
+      <div class="section-top">
+        <div>
+          <h2 tabindex="-1">选择平行宇宙</h2>
+        </div>
+        <p>点击任意卡带进入对应宇宙的防御塔与怪物图鉴</p>
+      </div>
+
+      <div class="world-cards">
+        <!-- 宇宙 I -->
+        <button class="world-card" data-go="science">
+          <div class="world-banner" style="background:#dff2ec">
+            <span class="world-num">UNIVERSE I</span>
+            <svg viewBox="0 0 360 210" fill="none">
+              <rect width="360" height="210" fill="#dff2ec"/>
+              <path d="M0 154 Q90 120 180 150 T360 142 L360 210 L0 210 Z" fill="#9cd3c4" stroke="#1b222c" stroke-width="3"/>
+              <rect x="138" y="64" width="44" height="78" rx="10" fill="#fffdf8" stroke="#1b222c" stroke-width="3"/>
+              <ellipse cx="160" cy="68" rx="28" ry="9" fill="#f4b731" stroke="#1b222c" stroke-width="3"/>
+              <circle cx="160" cy="46" r="12" fill="#e8624a" stroke="#1b222c" stroke-width="3"/>
+              <!-- 烧杯与气泡 -->
+              <path d="M236 98h28l12 42a8 8 0 0 1-8 10h-36a8 8 0 0 1-8-10z" fill="#fffdf8" stroke="#1b222c" stroke-width="3"/>
+              <path d="M230 128h40l6 14a6 6 0 0 1-6 8h-40a6 6 0 0 1-6-8z" fill="#6fd15c" stroke="#1b222c" stroke-width="2.5"/>
+              <circle cx="252" cy="78" r="9" fill="#f4b731" stroke="#1b222c" stroke-width="2.5"/>
+              <circle cx="272" cy="64" r="6" fill="#e8624a" stroke="#1b222c" stroke-width="2.5"/>
+              <!-- 铁球 -->
+              <circle cx="84" cy="140" r="18" fill="#697585" stroke="#1b222c" stroke-width="3"/>
+              <circle cx="78" cy="134" r="4" fill="#fffdf8"/>
+            </svg>
+          </div>
+          <div class="world-body">
+            <h3>科学纪元</h3>
+            <p>实验室大事故导致实验品全线逃逸。组合电磁、化学、生物与算法塔，打出连锁反应。</p>
+            <div class="pill-list">
+              <span class="mini-pill teal">四大学科塔</span>
+              <span class="mini-pill">4 怪物 + 反应釜 Boss</span>
+              <span class="mini-pill">跨学科联动</span>
+            </div>
+            <div class="world-go"><span>打开图鉴</span><span>→</span></div>
+          </div>
+        </button>
+
+        <!-- 宇宙 II -->
+        <button class="world-card" data-go="wuxing">
+          <div class="world-banner" style="background:#f7efe0">
+            <span class="world-num">UNIVERSE II</span>
+            <svg viewBox="0 0 360 210" fill="none">
+              <rect width="360" height="210" fill="#f7efe0"/>
+              <circle cx="286" cy="54" r="24" fill="#c94a34" stroke="#1b222c" stroke-width="3"/>
+              <polygon points="24,180 112,72 200,180" fill="#287a6b" stroke="#1b222c" stroke-width="3" stroke-linejoin="round"/>
+              <polygon points="150,180 232,96 320,180" fill="#4aa08e" stroke="#1b222c" stroke-width="3" stroke-linejoin="round"/>
+              <!-- 双水脉 -->
+              <path d="M0 166 Q110 132 180 172" stroke="#243038" stroke-width="16" stroke-linecap="round"/>
+              <path d="M360 166 Q250 132 180 172" stroke="#fffdf8" stroke-width="16" stroke-linecap="round"/>
+              <path d="M360 166 Q250 132 180 172" stroke="#1b222c" stroke-width="2.5" stroke-linecap="round"/>
+              <!-- 小关隘 -->
+              <rect x="160" y="114" width="40" height="30" fill="#fffdf8" stroke="#1b222c" stroke-width="3"/>
+              <polygon points="148,116 180,92 212,116" fill="#c94a34" stroke="#1b222c" stroke-width="3" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="world-body">
+            <h3>阴阳五行</h3>
+            <p>一黑一白双水脉环山而过。沿岸五座关隘演化十天干阴器与阳器，相生相克守阵眼。</p>
+            <div class="pill-list">
+              <span class="mini-pill red">十天干阴阳塔</span>
+              <span class="mini-pill">4 灵怪 + 太极炉 Boss</span>
+              <span class="mini-pill">生克连线</span>
+            </div>
+            <div class="world-go"><span>打开图鉴</span><span>→</span></div>
+          </div>
+        </button>
+
+        <!-- 宇宙 III -->
+        <button class="world-card locked" data-go="next">
+          <div class="world-banner" style="background:#ebe4d6">
+            <span class="world-num">UNIVERSE III</span>
+            <svg viewBox="0 0 360 210" fill="none">
+              <rect width="360" height="210" fill="#ebe4d6"/>
+              <circle cx="180" cy="105" r="54" fill="#fffdf8" stroke="#1b222c" stroke-width="3" stroke-dasharray="10 7"/>
+              <circle cx="180" cy="105" r="24" fill="#f4b731" stroke="#1b222c" stroke-width="3"/>
+              <path d="M180 93v24M168 105h24" stroke="#1b222c" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="world-body">
+            <h3>敬请期待</h3>
+            <p>下一座平行宇宙的星门尚在构筑中。先完成科学纪元与阴阳五行的防线部署。</p>
+            <div class="pill-list">
+              <span class="mini-pill">筹备中</span>
+              <span class="mini-pill">未解锁</span>
+            </div>
+            <div class="world-go"><span>查看进度</span><span>→</span></div>
+          </div>
+        </button>
+      </div>
+    </section>
+
+    <!-- 3. 科学纪元图鉴 -->
+    <section class="screen codex-layout" id="screen-science" hidden>
+      <!-- 左侧：手绘实验室路线微缩图 -->
+      <div class="board-panel">
+        <div class="board-header">
+          <div>
+            <div class="sub-kicker">UNIVERSE I · 第一平行宇宙</div>
+            <h2 tabindex="-1">科学纪元</h2>
+          </div>
+          <span class="tag-badge">实验室事故</span>
+        </div>
+
+        <div class="board-canvas" aria-hidden="true">
+          <svg viewBox="0 0 520 330" fill="none">
+            <rect width="520" height="330" fill="#e2f3ed"/>
+            <!-- 网格台面 -->
+            <path d="M0 66h520M0 132h520M0 198h520M0 264h520M104 0v330M208 0v330M312 0v330M416 0v330" stroke="#c8e4da" stroke-width="1.5"/>
+
+            <!-- 实验室S形航道 -->
+            <path d="M36 74 H210 Q254 74 254 118 V196 Q254 240 298 240 H448" stroke="#1b222c" stroke-width="38" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M36 74 H210 Q254 74 254 118 V196 Q254 240 298 240 H448" stroke="#fffdf8" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M36 74 H210 Q254 74 254 118 V196 Q254 240 298 240 H448" stroke="#b9d6cc" stroke-width="3" stroke-dasharray="10 10" stroke-linecap="round"/>
+
+            <!-- 起点：失控入口 -->
+            <rect x="18" y="50" width="48" height="48" rx="12" fill="#e8624a" stroke="#1b222c" stroke-width="3"/>
+            <text x="42" y="79" text-anchor="middle" fill="#fffdf8" font-size="13" font-weight="900">入口</text>
+
+            <!-- 终点：核心机器 -->
+            <rect x="422" y="206" width="72" height="68" rx="14" fill="#f4b731" stroke="#1b222c" stroke-width="3"/>
+            <circle cx="458" cy="234" r="14" fill="#fffdf8" stroke="#1b222c" stroke-width="2.5"/>
+            <circle cx="458" cy="234" r="6" fill="#1d8a78"/>
+            <text x="458" y="264" text-anchor="middle" fill="#1b222c" font-size="11.5" font-weight="900">核心机器</text>
+
+            <!-- 4 座学科塔位 -->
+            <g>
+              <rect x="128" y="114" width="54" height="54" rx="12" fill="#e0f4ef" stroke="#1b222c" stroke-width="3"/>
+              <text x="155" y="146" text-anchor="middle" fill="#1b222c" font-size="12" font-weight="800">物理塔</text>
+
+              <rect x="304" y="122" width="54" height="54" rx="12" fill="#fff1cc" stroke="#1b222c" stroke-width="3"/>
+              <text x="331" y="154" text-anchor="middle" fill="#1b222c" font-size="12" font-weight="800">化学塔</text>
+
+              <rect x="158" y="226" width="54" height="54" rx="12" fill="#e3f7dc" stroke="#1b222c" stroke-width="3"/>
+              <text x="185" y="258" text-anchor="middle" fill="#1b222c" font-size="12" font-weight="800">生物塔</text>
+
+              <rect x="332" y="26" width="54" height="54" rx="12" fill="#e1ecfc" stroke="#1b222c" stroke-width="3"/>
+              <text x="359" y="58" text-anchor="middle" fill="#1b222c" font-size="12" font-weight="800">算法塔</text>
+            </g>
+
+            <!-- 航道上的可爱小怪示意 -->
+            <g class="float-slow">
+              <!-- 绿史莱姆 -->
+              <path d="M108 82 C108 62, 138 62, 138 82 Z" fill="#6fd15c" stroke="#1b222c" stroke-width="2.5"/>
+              <circle cx="118" cy="75" r="2" fill="#1b222c"/>
+              <circle cx="128" cy="75" r="2" fill="#1b222c"/>
+            </g>
+            <!-- 失控铁球 -->
+            <circle cx="254" cy="148" r="14" fill="#64748b" stroke="#1b222c" stroke-width="2.8"/>
+            <circle cx="250" cy="143" r="3.5" fill="#fffdf8"/>
+            <!-- 不稳定气泡 -->
+            <g class="float-alt">
+              <circle cx="332" cy="240" r="12" fill="#f9826c" stroke="#1b222c" stroke-width="2.5"/>
+              <circle cx="328" cy="236" r="3" fill="#fffdf8"/>
+            </g>
+          </svg>
+        </div>
+
+        <div class="board-footer">
+          <p class="board-lore">核心玩法：不靠硬克，靠磁力甩击、火焰引爆与感染分裂连锁清场。</p>
+        </div>
+      </div>
+
+      <!-- 右侧：图鉴卡组 -->
+      <div class="deck-panel">
+        <div class="tab-bar" role="tablist" aria-label="科学纪元分类">
+          <button class="tab-pill" role="tab" aria-selected="true" data-group="science" data-tab="towers">四大学科塔</button>
+          <button class="tab-pill" role="tab" aria-selected="false" data-group="science" data-tab="enemies">失控怪物</button>
+          <button class="tab-pill" role="tab" aria-selected="false" data-group="science" data-tab="combos">跨学科反应</button>
+        </div>
+
+        <!-- 塔 -->
+        <div data-panel="science:towers">
+          <div class="card-grid-2" id="scienceTowers">
+            <button class="unit-card" aria-pressed="true" data-title="物理 · 电磁线圈塔" data-tag="磁力牵引" data-desc="可吸附「失控铁球」并甩出撞击沿途怪物，造成击退与碰撞伤害；过载电弧还能点燃易爆气泡。">
+              <span class="unit-icon teal"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><ellipse cx="16" cy="16" rx="12" ry="4.5" transform="rotate(-38 16 16)"/><ellipse cx="16" cy="16" rx="12" ry="4.5" transform="rotate(38 16 16)"/><circle cx="16" cy="16" r="2.5" fill="currentColor"/></svg></span>
+              <span><span class="unit-title">电磁线圈塔</span><span class="unit-sub">物理 · 牵引甩击</span></span>
+            </button>
+            <button class="unit-card" aria-pressed="false" data-title="化学 · 晶格反应塔" data-tag="酸蚀 / 引爆" data-desc="酸液大幅腐蚀「失控铁球」的金属外壳；火焰瞬间引爆「不稳定气泡」形成连锁爆炸。">
+              <span class="unit-icon amber"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4h10m-8 0v9L5 25q-1 3 3 3h16q4 0 2-4l-7-11V4M9 21q4-3 8 0t6 0"/></svg></span>
+              <span><span class="unit-title">晶格反应塔</span><span class="unit-sub">化学 · 破甲引爆</span></span>
+            </button>
+            <button class="unit-card" aria-pressed="false" data-title="生物 · 共生树塔" data-tag="分裂传染" data-desc="给「酸液史莱姆」挂上生物感染后，史莱姆被击破分裂时感染状态会一起传给两个小团。">
+              <span class="unit-icon coral"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 4c0 11 14 13 14 24M23 4c0 11-14 13-14 24M10 7h12M12 11h8M12 21h8M10 25h12"/></svg></span>
+              <span><span class="unit-title">共生树塔</span><span class="unit-sub">生物 · 感染传导</span></span>
+            </button>
+            <button class="unit-card" aria-pressed="false" data-title="计算机 · 算法阵列塔" data-tag="标记增伤" data-desc="优先标记「变异蘑菇」等高威胁单位引导集火，并预判弹跳怪落点、延长反应连锁窗口。">
+              <span class="unit-icon blue"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="7" y="7" width="18" height="18" rx="3"/><rect x="12" y="12" width="8" height="8"/><path d="M12 3v4m8-4v4M12 25v4m8-4v4M3 12h4m-4 8h4m18-8h4m-4 8h4"/></svg></span>
+              <span><span class="unit-title">算法阵列塔</span><span class="unit-sub">计算机 · 标记预测</span></span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 怪 -->
+        <div data-panel="science:enemies" hidden>
+          <div class="card-grid-2" id="scienceEnemies">
+            <button class="unit-card" aria-pressed="true" data-title="失控铁球" data-tag="物理 · 重甲坦克" data-desc="高生命、高金属抗性。别硬磨——用电磁塔吸甩撞怪，或用化学酸液直接化掉外壳。">
+              <span class="unit-icon blue"><strong>球</strong></span>
+              <span><span class="unit-title">失控铁球</span><span class="unit-sub">极高血量 · 磁性重甲</span></span>
+            </button>
+            <button class="unit-card" aria-pressed="false" data-title="酸液史莱姆" data-tag="化学 · 分裂怪" data-desc="击败后分裂成 2 个小史莱姆继续前进；先挂生物感染再打爆，能把毒素一并扩散。">
+              <span class="unit-icon teal"><strong>泥</strong></span>
+              <span><span class="unit-title">酸液史莱姆</span><span class="unit-sub">分裂 ×2 · 易传导</span></span>
+            </button>
+            <button class="unit-card" aria-pressed="false" data-title="不稳定气泡" data-tag="化学 · 高速易爆" data-desc="跑得很快容易漏怪，但被火焰或过载电弧点着后会当场引爆并波及周围敌人。">
+              <span class="unit-icon coral"><strong>泡</strong></span>
+              <span><span class="unit-title">不稳定气泡</span><span class="unit-sub">高速 · 连锁炸弹</span></span>
+            </button>
+            <button class="unit-card" aria-pressed="false" data-title="变异蘑菇" data-tag="生物 · 护盾光环" data-desc="边走边抖发光孢子，给附近小怪套护盾减伤。用算法塔标记后优先点杀断盾。">
+              <span class="unit-icon amber"><strong>菇</strong></span>
+              <span><span class="unit-title">变异蘑菇</span><span class="unit-sub">孢子光环 · 高优先</span></span>
+            </button>
+            <button class="unit-card full" aria-pressed="false" data-title="Boss · 失控反应釜" data-tag="四阶段状态机" data-desc="P1 泄压吐史莱姆 → P2 受击喷不稳定气泡 → P3 长出巨型蘑菇开孢子盾 → P4 残血终极解体炸成一地小怪。">
+              <span class="unit-icon coral"><strong>王</strong></span>
+              <span><span class="unit-title">失控反应釜（最终 Boss）</span><span class="unit-sub">召唤 · 喷泡 · 破盾 · 解体</span></span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 反应 -->
+        <div data-panel="science:combos" hidden>
+          <div class="combo-list">
+            <div class="combo-row"><span class="combo-eq">电磁牵引 + 失控铁球</span><span class="combo-res">吸来甩出，撞翻沿途小怪</span></div>
+            <div class="combo-row"><span class="combo-eq">火焰点燃 + 不稳定气泡</span><span class="combo-res">触发相邻气泡连锁爆炸</span></div>
+            <div class="combo-row"><span class="combo-eq">酸液腐蚀 + 失控铁球</span><span class="combo-res">熔解金属壳，大幅破甲</span></div>
+            <div class="combo-row"><span class="combo-eq">生物感染 + 酸液史莱姆</span><span class="combo-res">分裂后感染自动传给子体</span></div>
+          </div>
+        </div>
+
+        <div class="inspector">
+          <div class="inspector-box" id="scienceInspector">
+            <div class="inspector-top">
+              <span class="inspector-title">物理 · 电磁线圈塔</span>
+              <span class="inspector-tag">磁力牵引</span>
+            </div>
+            <p class="inspector-desc">可吸附「失控铁球」并甩出撞击沿途怪物，造成击退与碰撞伤害；过载电弧还能点燃易爆气泡。</p>
+          </div>
+          <div class="deck-foot">
+            <button class="btn-game ghost" data-go="index">← 返回目录</button>
+            <button class="btn-game teal" data-guard="科学纪元">守护科学纪元</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. 阴阳五行图鉴 -->
+    <section class="screen codex-layout" id="screen-wuxing" hidden>
+      <!-- 左侧：现代国潮双水脉示意板 -->
+      <div class="board-panel">
+        <div class="board-header wuxing-head">
+          <div>
+            <div class="sub-kicker">UNIVERSE II · 第二平行宇宙</div>
+            <h2 tabindex="-1">阴阳五行</h2>
+          </div>
+          <span class="tag-badge">黑白双水脉</span>
+        </div>
+
+        <div class="board-canvas wuxing-map" aria-hidden="true">
+          <svg viewBox="0 0 520 330" fill="none">
+            <rect width="520" height="330" fill="#f5efe0"/>
+            <!-- 红日与层叠青绿山 -->
+            <circle cx="446" cy="64" r="28" fill="#c94a34" stroke="#1b222c" stroke-width="3"/>
+            <polygon points="18,220 120,76 222,220" fill="#287a6b" stroke="#1b222c" stroke-width="3" stroke-linejoin="round"/>
+            <polygon points="150,235 268,96 384,235" fill="#479d8b" stroke="#1b222c" stroke-width="3" stroke-linejoin="round"/>
+            <polygon points="310,230 416,118 510,230" fill="#287a6b" stroke="#1b222c" stroke-width="3" stroke-linejoin="round"/>
+
+            <!-- 黑水阴脉（左）与白水阳脉（右）汇向阵眼 -->
+            <path d="M26 266 Q134 190 260 252" stroke="#243038" stroke-width="26" stroke-linecap="round"/>
+            <path d="M494 266 Q386 190 260 252" stroke="#1b222c" stroke-width="28" stroke-linecap="round"/>
+            <path d="M494 266 Q386 190 260 252" stroke="#fffdf8" stroke-width="22" stroke-linecap="round"/>
+
+            <!-- 阵眼 -->
+            <circle cx="260" cy="252" r="28" fill="#f4b731" stroke="#1b222c" stroke-width="3"/>
+            <text x="260" y="257" text-anchor="middle" fill="#1b222c" font-size="14" font-weight="900">阵眼</text>
+
+            <!-- 五座五行关隘标牌 -->
+            <g font-size="13" font-weight="900" text-anchor="middle">
+              <circle cx="96" cy="222" r="18" fill="#fffdf8" stroke="#1b222c" stroke-width="2.5"/><text x="96" y="227" fill="#1b222c">金</text>
+              <circle cx="176" cy="180" r="18" fill="#e1f1ed" stroke="#1b222c" stroke-width="2.5"/><text x="176" y="185" fill="#1b222c">木</text>
+              <circle cx="260" cy="164" r="18" fill="#dceefb" stroke="#1b222c" stroke-width="2.5"/><text x="260" y="169" fill="#1b222c">水</text>
+              <circle cx="344" cy="180" r="18" fill="#fae7e2" stroke="#1b222c" stroke-width="2.5"/><text x="344" y="185" fill="#1b222c">火</text>
+              <circle cx="424" cy="222" r="18" fill="#f7e8c4" stroke="#1b222c" stroke-width="2.5"/><text x="424" y="227" fill="#1b222c">土</text>
+            </g>
+
+            <!-- 双脉标注 -->
+            <rect x="26" y="286" width="94" height="26" rx="8" fill="#243038" stroke="#1b222c" stroke-width="2"/>
+            <text x="73" y="303" text-anchor="middle" fill="#fffdf8" font-size="11.5" font-weight="800">黑水 · 阴脉</text>
+            <rect x="400" y="286" width="94" height="26" rx="8" fill="#fffdf8" stroke="#1b222c" stroke-width="2"/>
+            <text x="447" y="303" text-anchor="middle" fill="#1b222c" font-size="11.5" font-weight="800">白水 · 阳脉</text>
+          </svg>
+        </div>
+
+        <div class="board-footer">
+          <p class="board-lore">核心玩法：五行相克破招、相邻相生连线，阴阳同守积攒太极调和波。</p>
+        </div>
+      </div>
+
+      <!-- 右侧：十天干 & 灵怪卡组 -->
+      <div class="deck-panel">
+        <div class="tab-bar" role="tablist" aria-label="阴阳五行分类">
+          <button class="tab-pill" role="tab" aria-selected="true" data-group="wuxing" data-tab="stems">十天干塔谱</button>
+          <button class="tab-pill" role="tab" aria-selected="false" data-group="wuxing" data-tab="enemies">五行灵怪</button>
+          <button class="tab-pill" role="tab" aria-selected="false" data-group="wuxing" data-tab="cycle">生克法则</button>
+        </div>
+
+        <!-- 十天干 -->
+        <div data-panel="wuxing:stems">
+          <div class="stems-header">
+            <span>行</span>
+            <span>阴支 · 灵巧控场</span>
+            <span>阳支 · 爆发范围</span>
+          </div>
+          <div class="stems-grid" id="wuxingStems">
+            <div class="stem-line">
+              <span class="wx-chip">金</span>
+              <button class="stem-tile yin" aria-pressed="true" data-title="辛金 · 银簪" data-tag="阴金 · 破甲点杀" data-desc="精准穿透并破甲；金克木，能立刻斩断「缠藤竹灵」的回血藤蔓。">
+                <svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 34 27 16 12 34Z M26 17C17 17 18 9 23 10Q25 10 26 14C23 4 32 4 31 11Q30 14 28 15C36 9 39 17 32 19Q29 20 26 17Z M32 19v7"/></svg>
+                <span><span class="stem-name">辛金</span><span class="stem-tag">银簪</span></span>
+              </button>
+              <button class="stem-tile yang" aria-pressed="false" data-title="庚金 · 铜钟" data-tag="阳金 · 声波震退" data-desc="范围震荡击退敌人；与土行相邻激活「土生金」，增强破甲与击退。">
+                <svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 11q0-7 5-7t5 7 M13 14q9-5 18 0l2 14 3 4q-14-4-28 0l3-5Z M13 18q9-4 18 0 M20 31q2 7 5 0"/></svg>
+                <span><span class="stem-name">庚金</span><span class="stem-tag">铜钟</span></span>
+              </button>
+            </div>
+            <div class="stem-line">
+              <span class="wx-chip">木</span>
+              <button class="stem-tile yin" aria-pressed="false" data-title="乙木 · 垂柳" data-tag="阴木 · 缠绕减速" data-desc="柔枝持续减速并吸收敌方增益，可直接吸干「墨浪水团」的滑行加速。">
+                <svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 12q13 4 27-6 M17 13q3 11-6 21 M23 12q6 9 0 19 M29 10q7 5 5 13"/></svg>
+                <span><span class="stem-name">乙木</span><span class="stem-tag">垂柳</span></span>
+              </button>
+              <button class="stem-tile yang" aria-pressed="false" data-title="甲木 · 劲竹" data-tag="阳木 · 破土突刺" data-desc="节节连击破盾；与火行相邻激活「木生火」，扩大火焰塔范围与伤害。">
+                <svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 37 22 8m-6 19 5 1m-4-11 6 1 M20 21q5-8 14-9-4 7-14 9Z M20 24Q10 21 8 15q9 1 12 9Z"/></svg>
+                <span><span class="stem-name">甲木</span><span class="stem-tag">劲竹</span></span>
+              </button>
+            </div>
+            <div class="stem-line">
+              <span class="wx-chip">水</span>
+              <button class="stem-tile yin" aria-pressed="false" data-title="癸水 · 涟漪" data-tag="阴水 · 群体浸湿" data-desc="扩散波纹令敌人易伤；水克火，可让「爆裂灯笼怪」直接熄火落地。">
+                <svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 6q-5 7-4 10a5 5 0 0 0 9-2q-1-3-5-8Z M15 23c-9 3 8 7 14 2 M9 27c-10 6 18 11 26 2"/></svg>
+                <span><span class="stem-name">癸水</span><span class="stem-tag">涟漪</span></span>
+              </button>
+              <button class="stem-tile yang" aria-pressed="false" data-title="壬水 · 潮头" data-tag="阳水 · 巨浪推回" data-desc="沿水脉冲刷推回敌群；与木行相邻激活「水生木」，滋养扩大缠绕范围。">
+                <svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 32q9 1 13-12 4-13 16-10-9 0-8 8 1 7 10 4-5 8-14 4 M5 36q9 1 15-8 6 6 17 0"/></svg>
+                <span><span class="stem-name">壬水</span><span class="stem-tag">潮头</span></span>
+              </button>
+            </div>
+            <div class="stem-line">
+              <span class="wx-chip">火</span>
+              <button class="stem-tile yin" aria-pressed="false" data-title="丁火 · 灯焰" data-tag="阴火 · 精准融甲" data-desc="持续灼烧融甲；火克金，可令「锈甲铜偶」铜甲变软、护甲骤降。">
+                <svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 25q12 3 24-2-2 9-12 10-9-1-12-8Z M21 33v3m-6 1h14 M21 24c-8-5 3-10 2-17 7 6 4 11 1 14"/></svg>
+                <span><span class="stem-name">丁火</span><span class="stem-tag">灯焰</span></span>
+              </button>
+              <button class="stem-tile yang" aria-pressed="false" data-title="丙火 · 日轮" data-tag="阳火 · 烈焰引爆" data-desc="炽烈光环大范围引爆；与土行相邻激活「火生土」，附加灼烧地面。">
+                <svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 25a10 10 0 1 1 20 0 M22 4v4M8 11l3 3m25-3-3 3 M5 21h4m26 0h4 M6 29q9-4 16 0t16 0"/></svg>
+                <span><span class="stem-name">丙火</span><span class="stem-tag">日轮</span></span>
+              </button>
+            </div>
+            <div class="stem-line">
+              <span class="wx-chip">土</span>
+              <button class="stem-tile yin" aria-pressed="false" data-title="己土 · 梯田" data-tag="阴土 · 层叠减速" data-desc="布设层叠地形削弱移速；土克水，能直接截流高速滑行的「墨浪水团」。">
+                <svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 26q6-5 12-5t10-5q4-4 10-3 M5 31q9-6 16-5 6 0 10-5l6-2 M8 36q8-5 17-5 6 0 11-5"/></svg>
+                <span><span class="stem-name">己土</span><span class="stem-tag">梯田</span></span>
+              </button>
+              <button class="stem-tile yang" aria-pressed="false" data-title="戊土 · 叠嶂" data-tag="阳土 · 山障拦截" data-desc="临时山障改变敌人行进节奏；同一关隘兼备阴器与阳器可积攒「太极气韵」。">
+                <svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 32 15 18l4 5L27 8l14 24 M18 32l7-11 M7 36q10-3 19-1t11 0"/></svg>
+                <span><span class="stem-name">戊土</span><span class="stem-tag">叠嶂</span></span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 灵怪 -->
+        <div data-panel="wuxing:enemies" hidden>
+          <div class="card-grid-2" id="wuxingEnemies">
+            <button class="unit-card" aria-pressed="true" data-title="锈甲铜偶" data-tag="金 · 火克金" data-desc="护甲极高且弹开轻击。用丁火或丙火灼烧后铜甲变软，护甲骤降且变慢。">
+              <span class="unit-icon amber"><strong>金</strong></span>
+              <span><span class="unit-title">锈甲铜偶</span><span class="unit-sub">重甲缓行 · 畏火</span></span>
+            </button>
+            <button class="unit-card" aria-pressed="false" data-title="缠藤竹灵" data-tag="木 · 金克木" data-desc="定期给附近小怪回血并提速。用辛金银簪或庚金铜钟命中可立刻斩断藤蔓。">
+              <span class="unit-icon teal"><strong>木</strong></span>
+              <span><span class="unit-title">缠藤竹灵</span><span class="unit-sub">群疗辅助 · 畏金</span></span>
+            </button>
+            <button class="unit-card" aria-pressed="false" data-title="墨浪水团" data-tag="水 · 土克水" data-desc="贴着水脉高速滑行，受击化雾前冲。遇梯田/叠嶂会被截流，乙木垂柳也可吸干加速。">
+              <span class="unit-icon blue"><strong>水</strong></span>
+              <span><span class="unit-title">墨浪水团</span><span class="unit-sub">高速滑行 · 畏土</span></span>
+            </button>
+            <button class="unit-card" aria-pressed="false" data-title="爆裂灯笼怪" data-tag="火 · 水克火" data-desc="靠近塔或被击破时爆火星。被癸水/壬水淋湿直接熄火落地，也能借其爆炸反炸金木怪。">
+              <span class="unit-icon coral"><strong>火</strong></span>
+              <span><span class="unit-title">爆裂灯笼怪</span><span class="unit-sub">易爆突进 · 畏水</span></span>
+            </button>
+            <button class="unit-card full" aria-pressed="false" data-title="Boss · 失衡太极炉" data-tag="阴阳翻转 · 双脉出怪" data-desc="周期切换阴态/阳态并蓄力五行冲阵，需用相克五行塔打断；残血掀盖沿黑白双脉同时涌出灵怪。">
+              <span class="unit-icon coral"><strong>炉</strong></span>
+              <span><span class="unit-title">失衡太极炉（最终 Boss）</span><span class="unit-sub">阴阳翻转 · 五行打断 · 双脉解体</span></span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 生克 -->
+        <div data-panel="wuxing:cycle" hidden>
+          <div class="combo-list">
+            <div class="combo-row"><span class="combo-eq">五行相克（破招）</span><span class="combo-res">火熔金 · 金断木 · 木破土 · 土截水 · 水熄火</span></div>
+            <div class="combo-row"><span class="combo-eq">木 → 火 → 土</span><span class="combo-res">竹柳助燃火焰 · 火焰烤炙地面灼烧</span></div>
+            <div class="combo-row"><span class="combo-eq">土 → 金 → 水 → 木</span><span class="combo-res">山石强钟 · 震荡起浪 · 涟漪滋养竹柳</span></div>
+            <div class="combo-row"><span class="combo-eq">阴阳调和波</span><span class="combo-res">阴器与阳器同守积满气韵，清增益并定身</span></div>
+          </div>
+        </div>
+
+        <div class="inspector">
+          <div class="inspector-box" id="wuxingInspector">
+            <div class="inspector-top">
+              <span class="inspector-title">辛金 · 银簪</span>
+              <span class="inspector-tag">阴金 · 破甲点杀</span>
+            </div>
+            <p class="inspector-desc">精准穿透并破甲；金克木，能立刻斩断「缠藤竹灵」的回血藤蔓。</p>
+          </div>
+          <div class="deck-foot">
+            <button class="btn-game ghost" data-go="index">← 返回目录</button>
+            <button class="btn-game vermilion" data-guard="阴阳五行">守护阴阳五行</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. 敬请期待 -->
+    <section class="screen next-card" id="screen-next" hidden>
+      <span class="tag-badge">UNIVERSE III</span>
+      <h2 tabindex="-1">下一座星门尚未开启</h2>
+      <p>第三座平行宇宙仍在设计排期中。按照当前开发计划，将先落地「科学纪元」可玩战斗原型，再复用引擎扩展「阴阳五行」。</p>
+      <button class="btn-game amber" data-go="index">返回平行宇宙目录</button>
+    </section>
+  </main>
+
+  <!-- 底部导航栏 -->
+  <footer class="hud-bottom">
+    <nav class="dock" aria-label="快捷切换">
+      <button class="dock-btn" data-go="cover" aria-current="page">封面</button>
+      <button class="dock-btn" data-go="index">目录</button>
+      <button class="dock-btn" data-go="science">Ⅰ 科学纪元</button>
+      <button class="dock-btn" data-go="wuxing">Ⅱ 阴阳五行</button>
+      <button class="dock-btn" data-go="next">Ⅲ 预告</button>
+    </nav>
+    <span class="kbd-hint">快捷键：← → 切页 · ESC 返回</span>
+  </footer>
+</div>
+
+<!-- 筹备中弹窗 -->
+<dialog id="guardDialog" aria-labelledby="guardTitle">
+  <div class="modal-head">
+    <h2 id="guardTitle">关卡筹备中</h2>
+    <button class="modal-x" data-close aria-label="关闭">✕</button>
+  </div>
+  <div class="modal-body">
+    <p id="guardText">该纪元的防守关卡正在开发中。</p>
+    <div class="modal-foot">
+      <button class="btn-game ghost" data-close>知道了</button>
+    </div>
+  </div>
+</dialog>
+
+<!-- 设置弹窗 -->
+<dialog id="settingsDialog" aria-labelledby="settingsTitle">
+  <div class="modal-head">
+    <h2 id="settingsTitle">游戏设置</h2>
+    <button class="modal-x" data-close aria-label="关闭">✕</button>
+  </div>
+  <div class="modal-body">
+    <label class="slider-group">
+      <span class="slider-top"><span>点击音效</span><output id="volOut">55%</output></span>
+      <input type="range" id="volume" min="0" max="100" value="55">
+    </label>
+    <label class="slider-group">
+      <span class="slider-top"><span>画面亮度</span><output id="lightOut">100%</output></span>
+      <input type="range" id="brightness" min="60" max="115" value="100">
+    </label>
+    <div class="modal-foot">
+      <button class="btn-game amber" data-close>保存并返回</button>
+    </div>
+  </div>
+</dialog>
+
+<script>
+const byId = id => document.getElementById(id);
+const SCREENS = ['cover', 'index', 'science', 'wuxing', 'next'];
+const CHIPS = {
+  cover: '封面 · 主菜单',
+  index: '平行宇宙目录',
+  science: 'Ⅰ 科学纪元 · 图鉴',
+  wuxing: 'Ⅱ 阴阳五行 · 图鉴',
+  next: 'Ⅲ 未启星门'
+};
+
+let current = 'cover';
+let audioCtx;
+
+function playPop(freq = 520) {
+  const vol = Number(byId('volume').value);
+  if (!vol) return;
+  try {
+    audioCtx ??= new AudioContext();
+    if (audioCtx.state === 'suspended') audioCtx.resume().catch(() => {});
+    const t = audioCtx.currentTime;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(freq, t);
+    osc.frequency.exponentialRampToValueAtTime(freq * 1.18, t + 0.06);
+    gain.gain.setValueAtTime(0.0001, t);
+    gain.gain.exponentialRampToValueAtTime(vol * 0.0009, t + 0.01);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.11);
+    osc.connect(gain).connect(audioCtx.destination);
+    osc.start(t);
+    osc.stop(t + 0.12);
+  } catch {}
+}
+
+function go(target, silent = false) {
+  if (!SCREENS.includes(target)) return;
+  current = target;
+  SCREENS.forEach(name => { byId('screen-' + name).hidden = name !== target; });
+  byId('stageChip').textContent = CHIPS[target];
+  document.querySelectorAll('.dock-btn').forEach(btn => {
+    if (btn.dataset.go === target) btn.setAttribute('aria-current', 'page');
+    else btn.removeAttribute('aria-current');
+  });
+  if (!silent) playPop(target === 'wuxing' ? 440 : 540);
+  const h2 = byId('screen-' + target).querySelector('h2');
+  if (h2) h2.focus({ preventScroll: true });
+}
+
+byId('homeBtn').onclick = () => go('cover');
+byId('startBtn').onclick = () => go('index');
+document.querySelectorAll('[data-go]').forEach(el => {
+  el.addEventListener('click', () => go(el.dataset.go));
+});
+
+document.addEventListener('keydown', e => {
+  if (document.querySelector('dialog[open]')) return;
+  const i = SCREENS.indexOf(current);
+  if (e.key === 'ArrowRight' && i < SCREENS.length - 1) go(SCREENS[i + 1]);
+  if (e.key === 'ArrowLeft' && i > 0) go(SCREENS[i - 1]);
+  if (e.key === 'Escape' && current !== 'cover') go(current === 'index' ? 'cover' : 'index');
+});
+
+// 图鉴标签切换
+document.querySelectorAll('.tab-pill').forEach(tab => {
+  tab.addEventListener('click', () => {
+    const group = tab.dataset.group;
+    const panelName = tab.dataset.tab;
+    document.querySelectorAll(`.tab-pill[data-group="${group}"]`).forEach(b => {
+      b.setAttribute('aria-selected', String(b === tab));
+    });
+    document.querySelectorAll(`[data-panel^="${group}:"]`).forEach(p => {
+      p.hidden = p.dataset.panel !== `${group}:${panelName}`;
+    });
+    const active = document.querySelector(`[data-panel="${group}:${panelName}"]`);
+    const picked = active.querySelector('[aria-pressed="true"]') || active.querySelector('[data-title]');
+    if (picked) setInspector(group, picked);
+    playPop(620);
+  });
+});
+
+function setInspector(group, el) {
+  const box = byId(group + 'Inspector');
+  if (!box || !el) return;
+  box.querySelector('.inspector-title').textContent = el.dataset.title;
+  box.querySelector('.inspector-tag').textContent = el.dataset.tag;
+  box.querySelector('.inspector-desc').textContent = el.dataset.desc;
+}
+
+['scienceTowers', 'scienceEnemies', 'wuxingStems', 'wuxingEnemies'].forEach(id => {
+  const wrap = byId(id);
+  const group = id.startsWith('science') ? 'science' : 'wuxing';
+  wrap.addEventListener('click', e => {
+    const btn = e.target.closest('button[data-title]');
+    if (!btn) return;
+    wrap.querySelectorAll('button[data-title]').forEach(b => b.setAttribute('aria-pressed', String(b === btn)));
+    setInspector(group, btn);
+    playPop(680);
+  });
+});
+
+// 弹窗
+document.querySelectorAll('[data-guard]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const world = btn.dataset.guard;
+    byId('guardTitle').textContent = `守护 · ${world}`;
+    byId('guardText').textContent = `「${world}」的实机塔防关卡正在筹备中。接下来可以直接基于右侧图鉴里的塔、怪物与联动规则开做可玩原型。`;
+    byId('guardDialog').showModal();
+    playPop(460);
+  });
+});
+
+byId('settingsBtn').onclick = () => byId('settingsDialog').showModal();
+document.querySelectorAll('dialog').forEach(dlg => {
+  dlg.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', () => dlg.close()));
+  dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); });
+});
+
+// 设置持久化
+for (const [id, outId, def] of [['volume', 'volOut', 55], ['brightness', 'lightOut', 100]]) {
+  const input = byId(id);
+  let val = def;
+  try { val = localStorage.getItem('atlas.' + id) ?? def; } catch {}
+  input.value = val;
+  const apply = () => {
+    byId(outId).textContent = input.value + '%';
+    if (id === 'brightness') document.documentElement.style.filter = `brightness(${input.value}%)`;
+  };
+  apply();
+  input.addEventListener('input', () => {
+    apply();
+    try { localStorage.setItem('atlas.' + id, input.value); } catch {}
+  });
+}
+byId('volume').addEventListener('change', () => playPop(520));
+</script>
+</body>
+</html>
