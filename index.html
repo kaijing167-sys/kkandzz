@@ -218,6 +218,7 @@ byId('prev').onclick = () => show(page - 1);
 byId('next').onclick = () => show(page + 1);
 byId('guard').onclick = () => {
   if (turning) return;
+  if (page === 1) { location.href = 'science-era.html'; return; }
   byId('guardTitle').textContent = byId('guard').textContent;
   byId('guardDialog').showModal();
 };
